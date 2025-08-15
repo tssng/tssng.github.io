@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { loaderStatus.textContent = 'Boot sequence initiated.'; }, 2000);
         setTimeout(() => {
             loader.style.opacity = '0';
-            loader.style.pointerEvents = 'none';
+            loader.style.display = 'none'; 
         }, 2800);
 
 
