@@ -3,51 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DRIVE C:/ - Tejas Singh</title>
+    <title>Your Name - B+ Tree Portfolio</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Header containing your name and title -->
+    <header class="main-header">
+        <h1 id="portfolio-title">Your Name</h1>
+        <p id="portfolio-subtitle">Software Engineer // Database Enthusiast</p>
+    </header>
 
-    <div id="loader">
-        <div class="loader-content">
-            <p>ANALYZING DRIVE C:/ ...</p>
-            <div class="progress-bar">
-                <div class="progress"></div>
-            </div>
-            <p id="loader-status">Checking file allocation table...</p>
-        </div>
-    </div>
-
-    <div id="disk-grid-container">
-       
-    </div>
-
-    <main id="main-content" class="hidden">
-        <div class="content-header">
-            <h1 id="content-title"></h1>
-            <button id="close-content">[ close file ]</button>
-        </div>
-        <div class="content-body" id="content-body">
-            
+    <!-- Main container for the B+ Tree visualization -->
+    <main class="tree-container">
+        <div id="b-tree">
+            <!-- The B+ Tree will be dynamically generated here by JavaScript -->
         </div>
     </main>
 
-    <nav id="fat-nav">
-        <div class="nav-header">
-            <h2>FILE ALLOCATION TABLE</h2>
-            <p>Select a file to recover:</p>
+    <!-- Section to display the content of the selected leaf node -->
+    <section id="content-display" class="content-display-section hidden">
+        <div class="content-wrapper">
+            <button id="close-content" class="close-button">&times;</button>
+            <div id="content-details">
+                <!-- Content from leaf nodes will be injected here -->
+            </div>
         </div>
-        <ul>
-            <li><a href="#" data-content-id="about">[ 0x01 ] identity.log</a></li>
-            <li><a href="#" data-content-id="projects">[ 0x02 ] recovered_data/</a></li>
-            <li><a href="#" data-content-id="skills">[ 0x03 ] core_attributes.sys</a></li>
-            <li><a href="#" data-content-id="contact">[ 0x04 ] connection.cfg</a></li>
-        </ul>
-    </nav>
+    </section>
+    
+    <!-- Footer with some fun "database" stats -->
+    <footer class="main-footer">
+        <p>Tree Order: <span id="tree-order">3</span> | Height: <span id="tree-height">2</span> | Total Entries: <span id="total-entries">10</span></p>
+        <p>Built by Your Name &copy; 2025</p>
+    </footer>
 
+    <!-- Link to the main JavaScript file -->
     <script src="script.js"></script>
 </body>
 </html>
