@@ -3,43 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Name - B+ Tree Portfolio</title>
+    <title>System Monitor // [Your Name]</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header containing your name and title -->
-    <header class="main-header">
-        <h1 id="portfolio-title">Your Name</h1>
-        <p id="portfolio-subtitle">Software Engineer // Database Enthusiast</p>
-    </header>
-
-    <!-- Main container for the B+ Tree visualization -->
-    <main class="tree-container">
-        <div id="b-tree">
-            <!-- The B+ Tree will be dynamically generated here by JavaScript -->
+    <!-- Initial "System Boot" loading screen -->
+    <div id="boot-screen">
+        <div class="boot-content">
+            <p id="boot-text">> BIOS check... OK</p>
+            <p>> Initializing core systems...</p>
         </div>
-    </main>
+    </div>
 
-    <!-- Section to display the content of the selected leaf node -->
-    <section id="content-display" class="content-display-section hidden">
+    <!-- Main container for the plant and UI -->
+    <div id="dashboard">
+        <!-- The interactive plant SVG -->
+        <div id="plant-container">
+            <svg id="plant-svg" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid meet">
+                <!-- Paths for energy flow animation -->
+                <defs>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <!-- These paths will be targeted by JS for animation -->
+                <path id="path-main" d="M 200 600 V 250" stroke="rgba(0,255,120,0.1)" stroke-width="5" fill="none"/>
+                <path id="path-about" d="M 200 250 C 150 200, 150 150, 120 120" stroke="rgba(0,255,120,0.1)" stroke-width="3" fill="none"/>
+                <path id="path-projects" d="M 200 250 C 250 200, 250 150, 280 120" stroke="rgba(0,255,120,0.1)" stroke-width="3" fill="none"/>
+                <path id="path-skills" d="M 200 350 C 120 320, 100 280, 80 250" stroke="rgba(0,255,120,0.1)" stroke-width="3" fill="none"/>
+                <path id="path-contact" d="M 200 350 C 280 320, 300 280, 320 250" stroke="rgba(0,255,120,0.1)" stroke-width="3" fill="none"/>
+                <!-- The glowing energy pulse -->
+                <circle id="energy-pulse" r="5" fill="cyan" filter="url(#glow)" class="hidden"/>
+            </svg>
+        </div>
+
+        <!-- Navigation and Info Panels -->
+        <header id="main-header">
+            <h1>[Your Name] // Photosynthesis Optimizer</h1>
+        </header>
+
+        <nav id="main-nav">
+            <a href="#" data-content-id="about" data-path-id="path-about">
+                <span class="nav-title">Ecological Niche</span>
+                <span class="nav-desc">Core Philosophy & Bio</span>
+            </a>
+            <a href="#" data-content-id="projects" data-path-id="path-projects">
+                <span class="nav-title">Leaf Metabolism</span>
+                <span class="nav-desc">Project Analysis</span>
+            </a>
+            <a href="#" data-content-id="skills" data-path-id="path-skills">
+                <span class="nav-title">Genetic Adaptations</span>
+                <span class="nav-desc">Skills & Technologies</span>
+            </a>
+            <a href="#" data-content-id="contact" data-path-id="path-contact">
+                <span class="nav-title">Mycorrhizal Network</span>
+                <span class="nav-desc">Contact & Links</span>
+            </a>
+        </nav>
+
+        <footer id="vitals-monitor">
+            <p>SYSTEM STATUS: <span class="status-ok">OPTIMAL</span></p>
+            <p>ENERGY EFFICIENCY: <span id="efficiency-value">99.8%</span></p>
+        </footer>
+    </div>
+
+    <!-- Panel to display content -->
+    <div id="content-panel" class="hidden">
         <div class="content-wrapper">
-            <button id="close-content" class="close-button">&times;</button>
-            <div id="content-details">
-                <!-- Content from leaf nodes will be injected here -->
+            <button id="close-panel">[ X ]</button>
+            <div id="panel-body">
+                <!-- Content will be injected here -->
             </div>
         </div>
-    </section>
-    
-    <!-- Footer with some fun "database" stats -->
-    <footer class="main-footer">
-        <p>Tree Order: <span id="tree-order">3</span> | Height: <span id="tree-height">2</span> | Total Entries: <span id="total-entries">10</span></p>
-        <p>Built by Your Name &copy; 2025</p>
-    </footer>
+    </div>
 
-    <!-- Link to the main JavaScript file -->
     <script src="script.js"></script>
 </body>
 </html>
