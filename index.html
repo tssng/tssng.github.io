@@ -1,1 +1,53 @@
-Hi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRIVE C:/ - Tejas Singh</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-content">
+            <p>ANALYZING DRIVE C:/ ...</p>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <p id="loader-status">Checking file allocation table...</p>
+        </div>
+    </div>
+
+    <div id="disk-grid-container">
+       
+    </div>
+
+    <main id="main-content" class="hidden">
+        <div class="content-header">
+            <h1 id="content-title"></h1>
+            <button id="close-content">[ close file ]</button>
+        </div>
+        <div class="content-body" id="content-body">
+            
+        </div>
+    </main>
+
+    <nav id="fat-nav">
+        <div class="nav-header">
+            <h2>FILE ALLOCATION TABLE</h2>
+            <p>Select a file to recover:</p>
+        </div>
+        <ul>
+            <li><a href="#" data-content-id="about">[ 0x01 ] identity.log</a></li>
+            <li><a href="#" data-content-id="projects">[ 0x02 ] recovered_data/</a></li>
+            <li><a href="#" data-content-id="skills">[ 0x03 ] core_attributes.sys</a></li>
+            <li><a href="#" data-content-id="contact">[ 0x04 ] connection.cfg</a></li>
+        </ul>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>
