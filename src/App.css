@@ -1,38 +1,142 @@
-.App {
-  text-align: center;
+/* --- General Styles & Layout --- */
+:root {
+    --background-color: #111827; /* Dark blue-gray */
+    --text-color: #E5E7EB; /* Light gray */
+    --primary-color: #38BDF8; /* Sky blue */
+    --secondary-color: #4B5563; /* Medium gray */
+    --panel-background: #1F2937; /* Slightly lighter dark blue-gray */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    overflow: hidden; /* Prevent scrolling */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+#root {
+    width: 100vw;
+    height: 100vh;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.app-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
 }
 
-.App-link {
-  color: #61dafb;
+.tree-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* --- SVG Tree Styles --- */
+.link {
+    fill: none;
+    stroke: var(--secondary-color);
+    stroke-width: 1.5px;
+    stroke-opacity: 0.6;
+}
+
+.node-circle {
+    stroke: var(--primary-color);
+    stroke-width: 2px;
+    fill: var(--background-color);
+    transition: fill 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.node-circle.clickable {
+    cursor: pointer;
+}
+
+.node-circle.clickable:hover {
+    fill: var(--primary-color);
+    transform: scale(1.2);
+}
+
+.node-text {
+    font-size: 14px;
+    font-weight: 500;
+    fill: var(--text-color);
+    paint-order: stroke;
+    stroke: var(--background-color);
+    stroke-width: 3px;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+    user-select: none; /* Prevent text selection */
+}
+
+/* --- Info Panel Styles --- */
+.info-panel {
+    position: fixed;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+    width: 300px;
+    max-width: 80vw;
+    padding: 25px;
+    background-color: var(--panel-background);
+    border: 1px solid var(--secondary-color);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 10;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50%) translateX(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(-50%) translateX(0);
+        opacity: 1;
+    }
+}
+
+.info-panel h3 {
+    margin-top: 0;
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.info-panel p {
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+.info-panel a {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.info-panel a:hover {
+    background-color: #7DD3FC; /* Lighter sky blue */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--secondary-color);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: var(--text-color);
 }
