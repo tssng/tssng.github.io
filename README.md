@@ -1,12 +1,12 @@
-# Tejas / research & notes
+# ECLIPSE / Tejas
 
-A static research portfolio with a clean ASCII aesthetic, an interactive
-value-iteration gridworld, project notes, and a Markdown blog. No client framework
-or external font service is required.
+An observatory for learned systems. A static portfolio with an interactive ASCII
+aperture, a research index, project summaries, optional project notebooks, and a
+Markdown blog. Built with Node.js and Marked; no client framework or font service.
 
-## Local development
+## Run locally
 
-Use Node.js 22 or newer.
+Use Node.js 22 or newer (`nvm use` reads `.nvmrc`).
 
 ```sh
 npm ci
@@ -14,51 +14,100 @@ npm run build
 npm start
 ```
 
-Open http://127.0.0.1:4173. Rebuild after edits, then refresh.
+Open http://127.0.0.1:4173. Rebuild after content edits, then refresh.
+Run `npm test` to verify content publication and report opt-in behavior.
 
-## Publish a blog post
+## Where content lives
 
-1. Copy `content/posts/_template.md` to `content/posts/your-post-slug.md`.
-2. Set `title`, `date` (YYYY-MM-DD), and a one-line `summary`.
-3. Write the body in Markdown. Set `draft: false` to publish.
-4. Run `npm run build`. Published posts appear automatically in the homepage’s
-   notes section and at `/notes/your-post-slug/`, sorted newest first.
+| Content                        | Source                                 |
+| ------------------------------ | -------------------------------------- |
+| Name, bio, interests, GitHub   | `content/site.json`                    |
+| Project summaries              | `content/projects/<project-slug>.json` |
+| Optional project reports       | `content/reports/<project-slug>/*.md`  |
+| Blog posts                     | `content/posts/*.md`                   |
+| Page layouts and navigation    | `scripts/lib/render.mjs`               |
+| Generated ASCII studies        | `scripts/lib/glyphs.mjs`               |
+| Styling and reading layouts    | `public/styles.css`                    |
+| Glyph interactions and filters | `public/site.js`                       |
 
-Files starting with `_` and posts with `draft: true` are never published.
-The title becomes the page’s H1; start body sections with `##`.
-Put images in `public/assets/` and use paths such as `/assets/figure.png`.
-Front matter uses simple single-line fields, not full YAML. For text that needs
-quoting, double quotes follow JSON string rules. Markdown may contain HTML;
-posts are trusted repository source, so review outside contributions.
+The build generates `/`, `/research/`, `/research/<project-slug>/`,
+`/notes/`, `/about/`, and any published article routes. Do not edit `build/`.
 
-## Edit the portfolio
+## Add a project
 
-- `public/index.html`: name, introduction, bio, project summaries, and links.
-- `public/script.js`: project detail text and the toy gridworld.
-- `public/styles.css`: colors, type, responsive layout, and article styling.
-- `public/assets/fonts/`: self-hosted IBM Plex Mono with its OFL license.
-- `content/posts/`: blog posts.
+Copy `content/projects/_template.json` to a lowercase, hyphen-separated filename
+such as `content/projects/causal-memory.json`. The filename becomes the URL slug.
+Set a unique numeric `order`, then edit the title, area, summary, question,
+abstract paragraphs, and tags.
 
-Project figures are illustrative ASCII diagrams, not experimental images.
-The gridworld is an interactive demonstration, not a claim of RL research:
-5×5 deterministic states, four cardinal actions, fixed walls, terminal goal,
-reward +1 at the goal and −0.04 otherwise, discount 0.95. Value iteration solves
-the Bellman optimality equation; the agent follows its greedy policy. “Return”
-is the discounted sum of rewards since reset. Goal value is zero because it is
-terminal. Controls never start animation automatically.
+Choose a glyph family: `totality`, `policy`, or `circuit`. The project slug adds
+a deterministic variation to the study. Categories are discovered from project
+files and appear automatically in the research index filter.
+Optional `links` use objects with `label` and an HTTPS `url`.
 
-The Aletheia link points to the organizer’s repository; it is labeled accordingly.
-No publication record, affiliation, CV, or contact information has been invented.
+A new project appears on the homepage and research index and gets its own summary
+page after a build. No template or navigation edits are required.
 
-## GitHub Pages
+## Opt in to research reports
 
-`.github/workflows/pages.yml` builds on pushes to `main` and manual runs, then
-deploys `build/` through GitHub Actions.
+Reports are **off by default**. Omit `reports` or set it to `false` to keep a
+project as a summary preview. The build emits no notebook section, expansion
+control, report count, report links, or report pages for that project.
+Files in a disabled project's report folder are not read or published.
 
-In GitHub → repository **Settings → Pages → Build and deployment**, select
-**GitHub Actions** as the source. This is needed once if the repository previously
-published from `gh-pages`. Merge the redesign branch into `main` to trigger it.
-The generated output includes `.nojekyll` and a custom 404 page.
+To enable a notebook:
 
-Build artifacts and dependency folders are ignored. The build validates post
-metadata and local HTML links before replacing the output directory.
+1. Add `"reports": true` to that project's JSON.
+2. Create `content/reports/<project-slug>/`.
+3. Copy `content/reports/_template.md` into that folder with a descriptive filename.
+4. Write the report and change `draft: true` to `draft: false` when ready.
+
+The project summary gets a native, keyboard-accessible expandable notebook.
+Published reports appear newest first, each with its own reading page:
+`/research/<project-slug>/reports/<report-slug>/`.
+An opted-in notebook with no published reports shows a simple empty state.
+
+The myelin segmentation and Aletheia’s Quest projects currently have reports off.
+World-model adaptation has reports on, with one explicitly labeled placeholder.
+
+## Add a blog post
+
+Copy `content/posts/_template.md` to `content/posts/your-post-slug.md`.
+Set `title`, `date` (YYYY-MM-DD), and a one-line `summary`; write Markdown below
+the front matter and set `draft: false` to publish.
+Blog posts appear at `/notes/your-post-slug/` and in the chronological notes index.
+
+Front matter accepts single-line `title`, `date`, `summary`, `draft`, and optional
+`kind` fields. This is a small subset, not full YAML. Double-quoted values follow
+JSON string rules. Supported kinds: `note`, `progress`, `report`, `placeholder`.
+Files beginning with `_` and entries with `draft: true` are never published.
+
+Markdown is trusted repository source and may contain HTML. Use `##` for body
+sections since the title supplies H1. Put images in `public/assets/` and link to
+them with absolute paths such as `/assets/figure.png`.
+Use HTML `<figure>` / `<figcaption>` for numbered figures and
+`<aside class="margin-note">` for an annotation.
+
+Every page uses the dark ECLIPSE palette, including long-form notes and reports.
+There is no light theme or reading-mode toggle. Earlier saved reading preferences
+have no effect. Content, report expansion, and navigation work without JavaScript.
+
+## Design behavior
+
+The central aperture has totality, exploration, and circuit states. Selection,
+navigation hover, and keyboard focus reveal a state with a restrained fade.
+Nothing animates continuously, and reduced-motion preferences remove transitions.
+ASCII studies are abstract diagrams, not experimental figures or reported results.
+The long-form typefaces and IBM Plex Mono are self-hosted with their OFL licenses.
+
+## Deployment
+
+The GitHub Pages workflow builds on pushes to `main` and manual runs.
+In repository **Settings → Pages → Build and deployment**, choose **GitHub
+Actions** as the source. Merge the review branch into `main` to deploy.
+The output includes a custom 404 page and `.nojekyll`.
+
+Builds validate metadata, configuration, and local asset/article links before
+replacing the last working `build/` directory. Disabled reports and drafts do not
+exist in the output. This is a publication option, not authentication: source
+committed to a public repository is still public even when omitted from the site.

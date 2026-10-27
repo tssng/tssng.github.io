@@ -1,0 +1,14 @@
+{
+  "order": 1,
+  "title": "Myelin segmentation",
+  "area": "Computational imaging",
+  "category": "imaging",
+  "glyph": "totality",
+  "summary": "Learning to recover three-dimensional myelin structure from optical focal stacks.",
+  "question": "What myelin structure can we recover from optical images, and where does the evidence run out?",
+  "abstract": [
+    "This project explores learned segmentation and reconstruction of myelin from optical focal stacks. It brings together representation learning, weak supervision, and evaluation of three-dimensional material recovery.",
+    "The central challenge is to distinguish image-supported structure from plausible geometry. Material recovery, fiber continuity, and depth need separate evaluation; visual plausibility alone does not establish validated anatomy."
+  ],
+  "tags": ["Inverse problems", "3D learning", "Microscopy"]
+}
