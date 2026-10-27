@@ -245,7 +245,7 @@ button:hover {
   aspect-ratio: 1;
 }
 .cell-off {
-  fill: #152019;
+  fill: none;
 }
 .cell-soft {
   fill: #9d8157;

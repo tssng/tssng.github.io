@@ -99,8 +99,9 @@ The homepage instrument switches between the three approved grid sigils: sun for
 RL interpretability, circular cross-section plus longitudinal fiber for myelin,
 and eye for Aletheia’s Quest. Selection, project hover, and keyboard focus reveal
 the corresponding sigil with a restrained fade. The initial sigil is the sun.
-Inactive squares stay dark; illuminated cells use amber, with a brighter selected
-cell. The same SVG matrix scales to project thumbnails and summary-page studies.
+Inactive cells are transparent, so sigils blend into the surrounding background.
+Illuminated cells use amber, with a brighter selected cell. The same SVG matrix
+scales to project thumbnails and summary-page studies.
 Nothing animates continuously, and reduced-motion preferences remove transitions.
 Sigils are abstract project identities, not experimental figures or reported results.
 The long-form typefaces and IBM Plex Mono are self-hosted with their OFL licenses.
