@@ -1,6 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { marked } from "marked";
+import { SIGILS } from "./glyphs.mjs";
 
 export const escape = (value) =>
   String(value).replace(
@@ -122,7 +123,7 @@ export async function loadContent(root) {
       throw new Error(filename + ": category must be a slug.");
     if (!Number.isFinite(project.order) || project.order < 1)
       throw new Error(filename + ": order must be a positive number.");
-    if (!["totality", "policy", "circuit"].includes(project.glyph))
+    if (!Object.hasOwn(SIGILS, project.glyph))
       throw new Error(filename + ": invalid glyph.");
     for (const key of ["abstract", "tags"]) {
       if (!Array.isArray(project[key]) || !project[key].length)

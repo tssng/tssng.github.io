@@ -3,7 +3,7 @@
   "title": "Project title",
   "area": "Research area",
   "category": "interpretability",
-  "glyph": "circuit",
+  "glyph": "eye",
   "summary": "A short preview for the research index.",
   "question": "What question does this project ask?",
   "abstract": ["A readable project summary."],

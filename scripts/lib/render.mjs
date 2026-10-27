@@ -1,5 +1,5 @@
 import { escape as e, prettyDate } from "./content.mjs";
-import { glyph } from "./glyphs.mjs";
+import { glyph, SIGILS } from "./glyphs.mjs";
 
 const aperture =
   '<svg class="aperture" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width=".8"/><path d="M20 2v4m18 14h-4M20 38v-4M2 20h4" stroke="currentColor" stroke-width=".7"/><circle cx="17" cy="18" r="13" fill="var(--bg)"/></svg>';
@@ -18,7 +18,7 @@ export function renderSite({ site, projects, posts }) {
       ]
         .map(
           ([key, label]) =>
-            `<a href="/${key}/" data-observe="${key === "research" ? "policy" : key === "notes" ? "circuit" : "totality"}"${section === key ? ' aria-current="page"' : ""}>${label}</a>`,
+            `<a href="/${key}/"${section === key ? ' aria-current="page"' : ""}>${label}</a>`,
         )
         .join("")}</nav></header>`;
   }
@@ -44,7 +44,7 @@ export function renderSite({ site, projects, posts }) {
   }
   function row(project, detailed = false) {
     return `<article class="research-item" data-category="${e(project.category)}"><a class="research-row${detailed ? " research-row-detailed" : ""}" href="${projectUrl(project)}" data-observe="${project.glyph}">
-      <span class="row-number">${pad(project.order)}</span><pre class="row-glyph" aria-hidden="true">${glyph(project.glyph, true, project.slug)}</pre>
+      <span class="row-number">${pad(project.order)}</span><div class="row-glyph" aria-hidden="true">${glyph(project.glyph)}</div>
       <div class="row-copy"><p class="metadata">${e(project.area)}${project.reports ? ' <span class="entry-mark">/ notebook</span>' : ""}</p><h3>${e(project.title)}</h3><p class="row-summary">${e(project.summary)}</p>${detailed ? `<p class="index-question">${e(project.question)}</p><ul class="tags">${project.tags.map((tag) => `<li>${e(tag)}</li>`).join("")}</ul>` : ""}</div>
       <span class="row-arrow" aria-hidden="true">↗</span></a></article>`;
   }
@@ -54,18 +54,19 @@ export function renderSite({ site, projects, posts }) {
   const emptyNotes =
     '<div class="empty-notes"><span aria-hidden="true">[ : ]</span><p>No observations published yet.<br><span class="muted">The notebook is open.</span></p></div>';
   function instrument() {
-    return `<div class="instrument" data-state="totality"><div class="instrument-meta"><span>Observatory / 001</span><span>Signal / <b id="signal-label">dormant</b></span></div>
-      <div class="instrument-stage" role="img" aria-label="ASCII eclipse: an opaque center surrounded by a thin corona" id="instrument-diagram">
-      ${["totality", "policy", "circuit"].map((kind) => `<pre class="instrument-glyph${kind === "totality" ? " is-active" : ""}" data-glyph="${kind}" aria-hidden="true">${glyph(kind)}</pre>`).join("")}</div>
-      <div class="instrument-bottom"><span class="instrument-coordinate" aria-hidden="true">[ observation / latent structure ]</span><div class="state-controls" role="group" aria-label="Observatory visual state">
-      ${[
-        ["totality", "Totality"],
-        ["policy", "Exploration"],
-        ["circuit", "Circuit"],
-      ]
+    return `<div class="instrument" data-state="sun"><div class="instrument-meta"><span>Observatory / 001</span><span>Signal / <b id="signal-label" aria-live="polite">${e(SIGILS.sun.signal)}</b></span></div>
+      <div class="instrument-stage" role="img" aria-label="${e(SIGILS.sun.description)}" id="instrument-diagram">
+      ${Object.entries(SIGILS)
         .map(
-          ([key, label], index) =>
-            `<button type="button" data-state-button="${key}" aria-pressed="${index === 0}"><span>0${index}</span> ${label}</button>`,
+          ([kind, sigil]) =>
+            `<div class="instrument-glyph${kind === "sun" ? " is-active" : ""}" data-glyph="${kind}" data-signal="${e(sigil.signal)}" data-description="${e(sigil.description)}" aria-hidden="true">${glyph(kind)}</div>`,
+        )
+        .join("")}</div>
+      <div class="instrument-bottom"><span class="instrument-coordinate" aria-hidden="true">[ 31 × 31 / project signatures ]</span><div class="state-controls" role="group" aria-label="Project sigil">
+      ${Object.entries(SIGILS)
+        .map(
+          ([kind, sigil]) =>
+            `<button type="button" data-state-button="${kind}" aria-pressed="${kind === "sun"}">${e(sigil.label)}</button>`,
         )
         .join("")}</div></div></div>`;
   }
@@ -98,7 +99,7 @@ export function renderSite({ site, projects, posts }) {
       page(
         `<div class="breadcrumb"><a href="/research/">Research</a><span>/</span><span>${pad(project.order)}</span></div><header class="project-heading"><p class="eyebrow">${e(project.area)} / project ${pad(project.order)}</p><h1>${e(project.title)}</h1><p class="project-deck">${e(project.summary)}</p></header>
       <section class="project-overview" aria-labelledby="question-title"><div class="abstract"><p class="eyebrow">01 / the question</p><h2 id="question-title">${e(project.question)}</h2><div class="abstract-body">${project.abstract.map((paragraph) => `<p>${e(paragraph)}</p>`).join("")}</div><ul class="tags">${project.tags.map((tag) => `<li>${e(tag)}</li>`).join("")}</ul>${project.links?.length ? `<div class="project-links">${project.links.map((link) => `<a href="${e(link.url)}">${e(link.label)} ↗</a>`).join("")}</div>` : ""}</div>
-      <figure class="project-study"><div class="study-label"><span>Study / ${pad(project.order)}</span><span>${e(project.glyph)}</span></div><pre aria-hidden="true">${glyph(project.glyph, false, project.slug)}</pre><figcaption>Abstract schematic / not experimental data</figcaption></figure></section>
+      <figure class="project-study"><div class="study-label"><span>Study / ${pad(project.order)}</span><span>${e(SIGILS[project.glyph].label)}</span></div><div class="study-sigil" aria-hidden="true">${glyph(project.glyph)}</div><figcaption>Project sigil / abstract symbol</figcaption></figure></section>
       ${reports}<div class="page-return"><a href="/research/">← Return to the research index</a></div>`,
         {
           title: project.title,

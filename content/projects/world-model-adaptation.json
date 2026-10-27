@@ -3,7 +3,7 @@
   "title": "When the world changes",
   "area": "Reinforcement learning × interpretability",
   "category": "rl",
-  "glyph": "policy",
+  "glyph": "sun",
   "summary": "Studying how world-model agents revise outdated information when an environment’s physics changes.",
   "question": "When physics changes, how does a world-model agent replace outdated information—and can we identify the internal computations responsible for successful or failed adaptation?",
   "abstract": [

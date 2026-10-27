@@ -3,7 +3,7 @@
   "title": "Aletheia’s Quest",
   "area": "Language-model interpretability",
   "category": "interpretability",
-  "glyph": "circuit",
+  "glyph": "eye",
   "summary": "Investigating deceptive responses through internal activations and reasoning signals.",
   "question": "Can signals inside a language model help identify deceptive responses across different settings?",
   "abstract": [
