@@ -1,0 +1,17 @@
+{
+  "name": "Tejas",
+  "identity": "ECLIPSE",
+  "tagline": "An observatory for learned systems.",
+  "description": "Research in reinforcement learning, model interpretability, and computational imaging.",
+  "github": "https://github.com/tssng",
+  "bio": [
+    "I’m Tejas. I study the signals behind complex systems, from the structure of myelin in optical images to the internal behavior of learned models.",
+    "My current questions center on reinforcement learning and mechanistic interpretability: what a model represents, how those representations change, and which computations shape its behavior."
+  ],
+  "interests": [
+    "Reinforcement learning",
+    "Mechanistic interpretability",
+    "World-model adaptation",
+    "Computational imaging"
+  ]
+}

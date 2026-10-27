@@ -1,0 +1,20 @@
+{
+  "order": 2,
+  "title": "Aletheia’s Quest",
+  "area": "Language-model interpretability",
+  "category": "interpretability",
+  "glyph": "circuit",
+  "summary": "Investigating deceptive responses through internal activations and reasoning signals.",
+  "question": "Can signals inside a language model help identify deceptive responses across different settings?",
+  "abstract": [
+    "This competition project explores deception detection using residual-stream probes and reasoning signals. It considers how internal evidence can complement the model’s visible response.",
+    "The emphasis is on transfer and evaluation: a detector’s ranking and calibration can change across models and scenarios. A useful signal needs to survive those changes, rather than simply track cues specific to one dataset."
+  ],
+  "tags": ["Activation probes", "LLM behavior", "Generalization"],
+  "links": [
+    {
+      "label": "Organizer’s competition repository",
+      "url": "https://github.com/ndif-team/Aletheias-Quest-Competition"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "order": 4,
+  "title": "Project title",
+  "area": "Research area",
+  "category": "interpretability",
+  "glyph": "circuit",
+  "summary": "A short preview for the research index.",
+  "question": "What question does this project ask?",
+  "abstract": ["A readable project summary."],
+  "tags": ["Topic"]
+}
