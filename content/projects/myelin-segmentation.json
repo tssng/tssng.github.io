@@ -3,7 +3,7 @@
   "title": "Myelin segmentation",
   "area": "Computational imaging",
   "category": "imaging",
-  "glyph": "totality",
+  "glyph": "fiber",
   "summary": "Learning to recover three-dimensional myelin structure from optical focal stacks.",
   "question": "What myelin structure can we recover from optical images, and where does the evidence run out?",
   "abstract": [

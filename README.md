@@ -1,7 +1,7 @@
 # ECLIPSE / Tejas
 
-An observatory for learned systems. A static portfolio with an interactive ASCII
-aperture, a research index, project summaries, optional project notebooks, and a
+An observatory for learned systems. A static portfolio with an interactive square-grid
+instrument, a research index, project summaries, optional project notebooks, and a
 Markdown blog. Built with Node.js and Marked; no client framework or font service.
 
 ## Run locally
@@ -26,7 +26,7 @@ Run `npm test` to verify content publication and report opt-in behavior.
 | Optional project reports       | `content/reports/<project-slug>/*.md`  |
 | Blog posts                     | `content/posts/*.md`                   |
 | Page layouts and navigation    | `scripts/lib/render.mjs`               |
-| Generated ASCII studies        | `scripts/lib/glyphs.mjs`               |
+| Generated grid sigils          | `scripts/lib/glyphs.mjs`               |
 | Styling and reading layouts    | `public/styles.css`                    |
 | Glyph interactions and filters | `public/site.js`                       |
 
@@ -40,8 +40,9 @@ such as `content/projects/causal-memory.json`. The filename becomes the URL slug
 Set a unique numeric `order`, then edit the title, area, summary, question,
 abstract paragraphs, and tags.
 
-Choose a glyph family: `totality`, `policy`, or `circuit`. The project slug adds
-a deterministic variation to the study. Categories are discovered from project
+Choose a sigil: `sun`, `fiber`, or `eye`. Every symbol uses the same 31 × 31
+matrix of square cells. Shapes remain consistent across the homepage, research
+index, and project summary pages. Categories are discovered from project
 files and appear automatically in the research index filter.
 Optional `links` use objects with `label` and an HTTPS `url`.
 
@@ -94,10 +95,14 @@ have no effect. Content, report expansion, and navigation work without JavaScrip
 
 ## Design behavior
 
-The central aperture has totality, exploration, and circuit states. Selection,
-navigation hover, and keyboard focus reveal a state with a restrained fade.
+The homepage instrument switches between the three approved grid sigils: sun for
+RL interpretability, circular cross-section plus longitudinal fiber for myelin,
+and eye for Aletheia’s Quest. Selection, project hover, and keyboard focus reveal
+the corresponding sigil with a restrained fade. The initial sigil is the sun.
+Inactive squares stay dark; illuminated cells use amber, with a brighter selected
+cell. The same SVG matrix scales to project thumbnails and summary-page studies.
 Nothing animates continuously, and reduced-motion preferences remove transitions.
-ASCII studies are abstract diagrams, not experimental figures or reported results.
+Sigils are abstract project identities, not experimental figures or reported results.
 The long-form typefaces and IBM Plex Mono are self-hosted with their OFL licenses.
 
 ## Deployment

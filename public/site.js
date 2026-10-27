@@ -1,22 +1,16 @@
 document.body.classList.remove("no-js");
 const instrument = document.querySelector(".instrument");
 if (instrument) {
-  let selected = "totality";
-  const descriptions = {
-    totality: [
-      "dormant",
-      "ASCII eclipse: an opaque center surrounded by a thin corona",
-    ],
-    policy: [
-      "exploring",
-      "ASCII trajectories: branching paths through an environment",
-    ],
-    circuit: [
-      "tracing",
-      "ASCII circuit: a selected path through a sparse network",
-    ],
-  };
+  let selected = "sun";
+  const panels = new Map(
+    [...instrument.querySelectorAll("[data-glyph]")].map((panel) => [
+      panel.dataset.glyph,
+      panel,
+    ]),
+  );
   const show = (state) => {
+    const current = panels.get(state);
+    if (!current) return;
     instrument.dataset.state = state;
     instrument
       .querySelectorAll("[data-glyph]")
@@ -32,10 +26,10 @@ if (instrument) {
         ),
       );
     document.querySelector("#signal-label").textContent =
-      descriptions[state][0];
+      current.dataset.signal;
     document
       .querySelector("#instrument-diagram")
-      .setAttribute("aria-label", descriptions[state][1]);
+      .setAttribute("aria-label", current.dataset.description);
   };
   instrument.querySelectorAll("[data-state-button]").forEach((button) =>
     button.addEventListener("click", () => {

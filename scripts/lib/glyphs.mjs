@@ -1,137 +1,86 @@
-// Deterministic studies in one shared ASCII vocabulary. No simulated results.
-const escape = (char) =>
-  char === "<" ? "&lt;" : char === "&" ? "&amp;" : char;
-export function glyph(kind = "totality", compact = false, signature = "") {
-  const hash = [...signature].reduce(
-    (sum, char) => (sum * 31 + char.charCodeAt(0)) >>> 0,
-    0,
-  );
-  const phase = signature ? ((hash % 24) * Math.PI) / 12 : 0;
-  const cols = compact ? 39 : 87;
-  const rows = compact ? 17 : 35;
-  const scale = compact ? 0.47 : 1;
-  const cells = Array.from({ length: rows }, () =>
-    Array.from({ length: cols }, () => ({ char: " ", tone: "" })),
-  );
-  const put = (x, y, char, tone = "inactive") => {
-    if (cells[y]?.[x]) cells[y][x] = { char, tone };
-  };
-  const point = (x, y) => [
-    Math.round(cols / 2 + (x * scale) / 0.51),
-    Math.round(rows / 2 + y * scale),
-  ];
-  for (let y = 0; y < rows; y += 1) {
-    for (let x = 0; x < cols; x += 1) {
-      const dx = ((x - cols / 2) * 0.51) / scale;
-      const dy = (y - rows / 2) / scale;
-      const radius = Math.hypot(dx, dy);
-      const angle = Math.atan2(dy, dx);
-      const edge = 10.2 + 0.24 * Math.sin(angle * 7 + phase);
-      if (Math.abs(radius - edge) < 0.52) {
-        const active = kind === "totality" && angle > -1.6 && angle < 0.4;
-        put(x, y, active ? ":" : ".", active ? "active" : "inactive");
-      }
-      const tick = Math.abs(Math.sin((angle + phase) * 12));
-      if (radius > 12 && radius < 13.6 && tick < 0.11)
-        put(x, y, Math.abs(dy) > Math.abs(dx) ? "|" : "-", "inactive");
-      if (
-        kind === "totality" &&
-        radius > 11.4 &&
-        radius < 16 &&
-        Math.abs(Math.sin((angle + phase) * 3.5)) < 0.065
-      ) {
-        put(
-          x,
-          y,
-          Math.abs(dy) > Math.abs(dx) ? "|" : "-",
-          radius < 13 ? "active" : "inactive",
-        );
-      }
+// The approved mockup's shared 31 × 31 matrix, rendered as square SVG cells.
+// These are project identities, not experimental figures or model activations.
+export const GRID_SIZE = 31;
+export const SIGILS = Object.freeze({
+  sun: {
+    label: "Sun",
+    signal: "RL interpretability",
+    description:
+      "Grid sun: an illuminated circular boundary with eight radial rays.",
+  },
+  fiber: {
+    label: "Fiber",
+    signal: "Computational imaging",
+    description:
+      "Grid fiber: a circular cross-section beside a longitudinal fiber.",
+  },
+  eye: {
+    label: "Eye",
+    signal: "Model interpretability",
+    description:
+      "Grid eye: an almond-shaped outline surrounding an iris and dark pupil.",
+  },
+});
+
+function toneAt(kind, x, y) {
+  const dx = x - 15;
+  const dy = y - 15;
+  const radius = Math.hypot(dx, dy);
+  let tone = "off";
+  if (kind === "sun") {
+    if (radius >= 6.4 && radius <= 8.2) tone = dx + dy < 5 ? "active" : "soft";
+    const angle = Math.atan2(dy, dx);
+    // JS remainder is signed; normalize it to match the mockup's angle modulus.
+    const period = Math.PI / 4;
+    const delta = Math.abs(
+      ((((angle + Math.PI / 8) % period) + period) % period) - Math.PI / 8,
+    );
+    if (radius >= 10.7 && radius <= 14.1 && delta < 0.052) tone = "active";
+    if (x === 20 && y === 9) tone = "selected";
+  } else if (kind === "fiber") {
+    const sectionRadius = Math.hypot(x - 7, y - 15);
+    if (sectionRadius >= 4.7 && sectionRadius <= 6.1) tone = "active";
+    if (sectionRadius >= 2.7 && sectionRadius <= 3.5) tone = "soft";
+    if (y >= 3 && y <= 27) {
+      const center = 23 + Math.round(Math.sin(((y - 3) / 24) * Math.PI * 2));
+      if (Math.abs(Math.abs(x - center) - 3) <= 0.5)
+        tone = x < center ? "active" : "soft";
+    }
+    if (x === 3 && y === 11) tone = "selected";
+  } else if (kind === "eye") {
+    if (Math.abs(dx) <= 13) {
+      const edge = 6.5 * (1 - (dx / 13) ** 2);
+      if (Math.abs(Math.abs(dy) - edge) < 0.65)
+        tone = dy < 0 ? "active" : "soft";
+    }
+    if (radius >= 4.2 && radius <= 5.7) tone = "active";
+    if (x === 17 && y === 12) tone = "selected";
+  }
+  return tone;
+}
+
+export function glyph(kind) {
+  if (!Object.hasOwn(SIGILS, kind))
+    throw new Error("Unknown grid sigil: " + kind);
+  const paths = { off: "", soft: "", active: "", selected: "" };
+  for (let y = 0; y < GRID_SIZE; y += 1) {
+    for (let x = 0; x < GRID_SIZE; x += 1) {
+      // Draw the unlit matrix once, with the selected cells layered over it.
+      const square = "M" + x * 11 + " " + y * 11 + "h9v9h-9z";
+      paths.off += square;
+      const tone = toneAt(kind, x, y);
+      if (tone !== "off") paths[tone] += square;
     }
   }
-  function line(a, b, tone) {
-    const [x0, y0] = point(...a),
-      [x1, y1] = point(...b);
-    const length = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
-    const char =
-      y0 === y1
-        ? "-"
-        : x0 === x1
-          ? "|"
-          : (x1 - x0) * (y1 - y0) > 0
-            ? "\\"
-            : "/";
-    for (let i = 1; i < length; i += 1)
-      put(
-        Math.round(x0 + ((x1 - x0) * i) / length),
-        Math.round(y0 + ((y1 - y0) * i) / length),
-        char,
-        tone,
-      );
-  }
-  if (kind === "policy") {
-    const nodes = [
-      [-7, 6],
-      [-3, 2],
-      [2, -2],
-      [7, -6],
-      [5, 5],
-      [-4, -5],
-    ];
-    [
-      [0, 1],
-      [1, 2],
-      [2, 3],
-      [1, 4],
-      [2, 5],
-    ].forEach(([a, b], i) =>
-      line(nodes[a], nodes[b], i < 3 ? "active" : "inactive"),
-    );
-    nodes.forEach((p, i) =>
-      put(...point(...p), i === 3 ? "*" : "o", i < 4 ? "active" : "inactive"),
-    );
-  }
-  if (kind === "circuit") {
-    const nodes = [
-      [-8, -5],
-      [-8, 1],
-      [-8, 6],
-      [0, -5],
-      [0, 2],
-      [8, -2],
-      [8, 5],
-    ];
-    [
-      [0, 3],
-      [1, 4],
-      [2, 4],
-      [3, 5],
-      [4, 5],
-      [4, 6],
-    ].forEach(([a, b], i) =>
-      line(nodes[a], nodes[b], [1, 4].includes(i) ? "active" : "inactive"),
-    );
-    nodes.forEach((p, i) =>
-      put(
-        ...point(...p),
-        i === 5 ? "*" : "o",
-        [1, 4, 5].includes(i) ? "active" : "inactive",
-      ),
-    );
-  }
-  return cells
-    .map((row) =>
-      row
-        .map((cell) =>
-          cell.char === " "
-            ? " "
-            : '<span class="glyph-' +
-              cell.tone +
-              '">' +
-              escape(cell.char) +
-              "</span>",
-        )
-        .join(""),
-    )
-    .join("\n");
+  return (
+    '<svg xmlns="http://www.w3.org/2000/svg" class="grid-sigil" data-sigil="' +
+    kind +
+    '" data-grid-size="' +
+    GRID_SIZE +
+    '" viewBox="0 0 339 339" aria-hidden="true" focusable="false">' +
+    Object.entries(paths)
+      .map(([tone, d]) => '<path class="cell-' + tone + '" d="' + d + '"/>')
+      .join("") +
+    "</svg>"
+  );
 }

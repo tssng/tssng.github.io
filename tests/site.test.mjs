@@ -48,6 +48,11 @@ async function editProject(root, slug, edit) {
 test("only the opted-in RL project has reports; the original projects remain previews", async () =>
   fixture(async ({ root, build, html }) => {
     build();
+    const home = await html("");
+    assert.match(home, /class="instrument" data-state="sun"/);
+    for (const sigil of ["sun", "fiber", "eye"]) {
+      assert.match(home, new RegExp('data-state-button="' + sigil + '"'));
+    }
     for (const slug of ["myelin-segmentation", "aletheias-quest"]) {
       const preview = await html("research/" + slug);
       assert.doesNotMatch(
@@ -55,8 +60,17 @@ test("only the opted-in RL project has reports; the original projects remain pre
         /report-disclosure|reports-section|Research notebook/,
       );
       assert.match(preview, /class="abstract"/);
+      assert.match(
+        preview,
+        new RegExp(
+          'data-sigil="' +
+            (slug === "myelin-segmentation" ? "fiber" : "eye") +
+            '"',
+        ),
+      );
     }
     const rl = await html("research/world-model-adaptation");
+    assert.match(rl, /data-sigil="sun"/);
     assert.match(rl, /<details class="report-disclosure">/);
     assert.doesNotMatch(rl, /<details[^>]*\bopen\b/);
     assert.match(rl, /reports\/opening-observation\//);
