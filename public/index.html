@@ -1,17 +1,367 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>tssng</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="root"></div>
-    
-    <script type="module" src="/App.jsx"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Tejas — computational imaging, model interpretability, and notes along the way."
+    />
+    <meta name="theme-color" content="#f6f5f1" />
+    <meta property="og:title" content="Tejas / research & notes" />
+    <meta
+      property="og:description"
+      content="Studying structure. Questioning behavior. Projects, experiments, and field notes."
+    />
+    <meta property="og:type" content="website" />
+    <title>Tejas / research & notes</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/script.js" defer></script>
+  </head>
+<body class="no-js">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="site-shell">
+      <header class="site-header">
+        <a href="#" class="wordmark" aria-label="Tejas, home"
+          ><span class="prompt">&gt;_</span> tejas<span class="muted"
+            >.research</span
+          ></a
+        >
+        <nav aria-label="Main navigation">
+          <a href="#work"><span>01</span> work</a>
+          <a href="#notes"><span>02</span> notes</a>
+          <a href="#about"><span>03</span> about</a>
+          <a class="nav-github" href="https://github.com/tssng">github ↗</a>
+        </nav>
+      </header>
+      <main id="main">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span class="status-dot" aria-hidden="true"></span> research /
+              experiments / notes
+            </p>
+            <h1 id="hero-title">
+              Tejas<span class="cursor" aria-hidden="true">_</span>
+            </h1>
+            <p class="hero-statement">
+              Studying structure.<br /><span>Questioning behavior.</span>
+            </p>
+            <p class="hero-description">
+              I explore the signals behind complex systems — from reconstructing
+              myelin in 3D to understanding the behavior of language models.
+            </p>
+            <div class="hero-links">
+              <a class="button" href="#work"
+                >explore the work <span aria-hidden="true">↓</span></a
+              >
+              <a class="text-link" href="#notes"
+                >read the notes <span aria-hidden="true">↗</span></a
+              >
+            </div>
+          </div>
+          <div
+            class="terminal"
+            aria-label="Interactive reinforcement learning gridworld"
+          >
+            <div class="terminal-bar">
+              <span
+                ><span class="terminal-dot" aria-hidden="true"></span> sandbox /
+                gridworld</span
+              ><span aria-hidden="true">[_]</span>
+            </div>
+            <div class="terminal-content">
+              <div class="terminal-heading">
+                <span>find a policy. reach the goal.</span
+                ><span class="demo-tag">TOY ENV</span>
+              </div>
+              <div
+                class="grid-tabs"
+                role="group"
+                aria-label="Gridworld display"
+              >
+                <button type="button" data-view="policy" aria-pressed="true">
+                  [ policy ]
+                </button>
+                <button type="button" data-view="value" aria-pressed="false">
+                  [ value ]
+                </button>
+              </div>
+              <pre
+                class="gridworld"
+                id="gridworld"
+                aria-label="Gridworld diagram"
+              >
++-----+-----+-----+-----+-----+
+|  @  |  →  |  →  |  →  |  ↓  |
++-----+-----+-----+-----+-----+
+|  ↓  | ### | ### |  ↓  |  ↓  |
++-----+-----+-----+-----+-----+
+|  →  |  →  |  →  |  ↓  |  ↓  |
++-----+-----+-----+-----+-----+
+|  ↓  | ### |  ↓  | ### |  ↓  |
++-----+-----+-----+-----+-----+
+|  →  |  →  |  →  |  →  |  G  |
++-----+-----+-----+-----+-----+</pre>
+              <div class="grid-legend">
+                <span><b class="agent-symbol">@</b> agent</span
+                ><span><b>G</b> goal</span
+                ><span><b class="wall-symbol">#</b> wall</span>
+              </div>
+              <div class="terminal-readout">
+                <span>step <b id="step-count">00</b></span
+                ><span>return <b id="return-count">0.00</b></span
+                ><span>γ <b>0.95</b></span>
+              </div>
+              <div class="terminal-controls">
+                <button type="button" id="step-button">step →</button
+                ><button type="button" id="run-button">run policy ▷</button
+                ><button
+                  type="button"
+                  id="reset-button"
+                  aria-label="Reset gridworld"
+                >
+                  reset ↺
+                </button>
+              </div>
+              <p
+                class="terminal-status"
+                id="grid-status"
+                role="status"
+                aria-live="polite"
+              >
+                $ policy ready. take a step.
+              </p>
+              <noscript
+                ><p>
+                  This interactive demo needs JavaScript. The rest of the site
+                  is ready to read.
+                </p></noscript
+              >
+            </div>
+          </div>
+          <p class="hero-footnote">
+            <span aria-hidden="true">└─</span> a small space for open questions.
+            <span class="hero-demo-note"
+              >gridworld: value iteration / illustrative demo</span
+            >
+          </p>
+        </section>
+        <section
+          class="work-section section"
+          id="work"
+          aria-labelledby="work-title"
+        >
+          <div class="section-top">
+            <div>
+              <p class="eyebrow">01 / selected work</p>
+              <h2 id="work-title">Questions into experiments.</h2>
+            </div>
+            <span class="section-aside">two threads, one curiosity.</span>
+          </div>
+          <div class="filters" role="group" aria-label="Filter projects">
+            <button type="button" data-filter="all" aria-pressed="true">
+              [ all ]</button
+            ><button type="button" data-filter="imaging" aria-pressed="false">
+              computational imaging</button
+            ><button
+              type="button"
+              data-filter="interpretability"
+              aria-pressed="false"
+            >
+              model interpretability</button
+            ><span
+              class="project-count"
+              id="project-count"
+              role="status"
+              aria-live="polite"
+              >2 projects</span
+            >
+          </div>
+          <div class="project-grid">
+            <article class="project" data-category="imaging">
+              <div
+                class="project-visual fiber-visual"
+                aria-label="Illustrative ASCII fiber contours, not microscopy data"
+                role="img"
+              >
+                <div class="visual-label">
+                  <span>FIG. 01 / RECONSTRUCTION</span><span>[ x, y, z ]</span>
+                </div>
+                <pre aria-hidden="true">
+        ..::::..                  ..:::..
+      .::      ::.             .::      ::.
+     ::  .::::.  ::           ::  .::::.  ::
+    ::  ::    ::  ::         ::  ::    ::  ::
+    ::  ::    ::  ::       .::  ::    .::  ::
+    ::  ::    ::  ::     .::  .::   .::  ::
+     ::  '::::'  ::    .::  .::   .::  .::
+      '::      ::'   .::  .::   .::  .::
+        '::::::'   .::  .::   .::  .::
+           ::    .::  .::   .::  .::
+          ::   .::  .::   .::  .::
+         ::  .::  .::   .::  .::
+        :: .::  .::   .::  .::
+        '  '    '     '    '</pre>
+                <div class="visual-footer">
+                  <span>focal stack → material geometry</span
+                  ><span>schematic only</span>
+                </div>
+              </div>
+              <div class="project-body">
+                <p class="project-meta">01 / COMPUTATIONAL IMAGING</p>
+                <h3>3D myelin reconstruction</h3>
+                <p>
+                  Recovering myelin structure from optical focal stacks. An
+                  exploration of learned reconstruction, weak supervision, and
+                  the limits of what the images can tell us.
+                </p>
+                <ul class="tags" aria-label="Topics">
+                  <li>inverse problems</li>
+                  <li>3D learning</li>
+                  <li>microscopy</li>
+                </ul>
+                <div class="project-links">
+                  <button class="text-link" type="button" data-project="myelin">
+                    project notes <span aria-hidden="true">↗</span></button
+                  >
+                </div>
+              </div>
+            </article>
+            <article class="project" data-category="interpretability">
+              <div
+                class="project-visual probe-visual"
+                aria-label="ASCII diagram of a language-model activation probe"
+                role="img"
+              >
+                <div class="visual-label">
+                  <span>FIG. 02 / INTERPRETABILITY</span><span>h → p(y)</span>
+                </div>
+                <pre aria-hidden="true">
+             [ conversation ]
+                     |
+                     v
+          +---------------------+
+          |    language model   |
+          |  · · · · · · · · ·  |
+          |  residual stream h  |----.
+          +---------------------+    |
+                     |               v
+                     v        +-------------+
+               [ response ]   | linear probe|
+                              +-------------+
+                                     |
+                                     v
+                                p(deceptive)</pre>
+                <div class="visual-footer">
+                  <span>internal signals → behavior</span
+                  ><span>schematic only</span>
+                </div>
+              </div>
+              <div class="project-body">
+                <p class="project-meta">02 / MODEL INTERPRETABILITY</p>
+                <h3>Aletheia’s Quest</h3>
+                <p>
+                  Investigating deception detection in language models using
+                  residual-stream probes and reasoning signals, with a focus on
+                  evaluation and generalization.
+                </p>
+                <ul class="tags" aria-label="Topics">
+                  <li>activation probes</li>
+                  <li>LLM behavior</li>
+                  <li>evaluation</li>
+                </ul>
+                <div class="project-links">
+                  <button
+                    class="text-link"
+                    type="button"
+                    data-project="aletheia"
+                  >
+                    project notes <span aria-hidden="true">↗</span></button
+                  ><a
+                    href="https://github.com/ndif-team/Aletheias-Quest-Competition"
+                    >competition repo ↗</a
+                  >
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+        <section
+          class="notes-section section"
+          id="notes"
+          aria-labelledby="notes-title"
+        >
+          <div class="section-top">
+            <div>
+              <p class="eyebrow">02 / field notes</p>
+              <h2 id="notes-title">Thinking, in public.</h2>
+            </div>
+            <span class="section-aside">~/notes/</span>
+          </div>
+          <p class="section-intro">
+            A home for research notes, experiments, and things I’m still
+            figuring out.
+          </p>
+          <!-- BLOG_POSTS -->
+        </section>
+        <section
+          class="about-section section"
+          id="about"
+          aria-labelledby="about-title"
+        >
+          <div class="about-copy">
+            <p class="eyebrow">03 / about</p>
+            <h2 id="about-title">Follow the signal.</h2>
+            <p>
+              I’m Tejas. My projects span computational imaging and
+              language-model behavior. I’m interested in turning difficult
+              questions into experiments — and in understanding where the
+              evidence ends.
+            </p>
+            <p class="muted">
+              This site is a record of that work, with room for the questions
+              that come next.
+            </p>
+            <a class="text-link" href="https://github.com/tssng"
+              >find me on GitHub <span aria-hidden="true">↗</span></a
+            >
+          </div>
+          <div class="focus-file">
+            <div class="file-heading">
+              interests.txt <span aria-hidden="true">[-]</span>
+            </div>
+            <pre><span class="comment"># threads I’m exploring</span>
+
+<span class="line-number">01</span>  computational imaging
+<span class="line-number">02</span>  inverse problems
+<span class="line-number">03</span>  model interpretability
+<span class="line-number">04</span>  reliable evaluation
+
+<span class="comment"># always a work in progress.</span></pre>
+          </div>
+        </section>
+      </main>
+      <footer class="site-footer">
+        <span
+          ><span class="prompt">&gt;_</span> Tejas
+          <span class="muted">/ research & notes</span></span
+        ><a href="#">back to top ↑</a>
+      </footer>
+    </div>
+    <dialog id="project-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-top">
+        <span class="eyebrow">project / readme</span
+        ><button
+          type="button"
+          id="close-dialog"
+          aria-label="Close project notes"
+        >
+          [ close × ]
+        </button>
+      </div>
+      <div id="dialog-content"></div>
+    </dialog>
+  </body>
 </html>
