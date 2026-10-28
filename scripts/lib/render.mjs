@@ -55,7 +55,7 @@ export function renderSite({ site, projects, posts }) {
   function instrument() {
     return `<section class="observatory" data-banner="wide" aria-labelledby="hero-title"><div class="banner-field">
       <div class="banner-aperture" aria-hidden="true">${apertureGlyph()}</div>
-      <div class="hero-copy"><h1 id="hero-title">The structure of<br>learned behavior.</h1><p class="hero-subtitle">Reinforcement learning <span>/</span> Mechanistic interpretability</p></div>
+      <div class="hero-copy"><h1 id="hero-title">Exploring the structure<br>of learned behavior.</h1><p class="hero-subtitle">Reinforcement learning <span>/</span> Mechanistic interpretability</p></div>
       </div>
       <nav class="banner-dock" aria-label="Research project shortcuts">${projects.map((project) => `<a class="banner-project" href="${projectUrl(project)}" data-observe="${project.glyph}" data-sigil-trigger><span class="dock-glyph" aria-hidden="true">${glyph(project.glyph)}</span><span class="dock-copy"><span class="metadata">${e(project.area)}</span><span class="dock-title">${e(project.title)}</span></span></a>`).join("")}</nav></section>`;
   }
