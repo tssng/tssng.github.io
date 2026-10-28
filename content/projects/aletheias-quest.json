@@ -8,9 +8,10 @@
   "question": "Can signals inside a language model help identify deceptive responses across different settings?",
   "abstract": [
     "This competition project explores deception detection using residual-stream probes and reasoning signals. It considers how internal evidence can complement the model’s visible response.",
-    "The emphasis is on transfer and evaluation: a detector’s ranking and calibration can change across models and scenarios. A useful signal needs to survive those changes, rather than simply track cues specific to one dataset."
+    "The emphasis is on transfer and evaluation: a detector’s efficacy can change across models and scenarios. Thus, any heuristic/method needs to stay adaptable, rather than requiring a complete new approach whenever the environment shifts.",
+    "Final leaderboard placement: 8th"
   ],
-  "tags": ["Activation probes", "LLM behavior", "Generalization"],
+  "tags": ["Mechanistic interpretability", "LLM behavior", "Misalignment detection"],
   "links": [
     {
       "label": "Organizer’s competition repository",
