@@ -1369,17 +1369,12 @@ button:hover {
   }
 }
 
-/* The approved centered observatory composition (Banner B). */
+/* The selected wide-aperture observatory composition (Banner A). */
 .observatory {
   padding: 0;
   border-bottom: 1px solid var(--line);
 }
-.banner-field {
-  height: 700px;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
+
 .banner-meta {
   position: absolute;
   top: 31px;
@@ -1406,107 +1401,13 @@ button:hover {
   background: var(--bg);
   padding: 2px 0;
 }
-.banner-aperture {
-  position: absolute;
-  width: 860px;
-  height: 860px;
-  left: 50%;
-  top: -40px;
-  transform: translateX(-50%);
-  pointer-events: none;
-}
+
 .aperture-grid {
   display: block;
   width: 100%;
   height: 100%;
 }
-.hero-copy {
-  position: absolute;
-  z-index: 1;
-  top: 267px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(610px, 100%);
-  text-align: center;
-}
-.hero-copy .eyebrow {
-  color: var(--accent);
-  font-size: 7px;
-  margin: 0 0 22px;
-}
-.hero-copy h1 {
-  font: 400 60px/1.06 var(--body);
-  letter-spacing: -2.2px;
-  margin: 0 0 27px;
-}
-.hero-subtitle {
-  font: 8px/1.9 var(--mono);
-  color: var(--muted);
-  margin: 0;
-}
-.hero-subtitle span {
-  color: var(--accent);
-  margin: 0 12px;
-}
-.banner-calibration {
-  position: absolute;
-  top: 380px;
-  z-index: 1;
-  color: var(--muted);
-  font: 8px/1.8 var(--mono);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.banner-calibration.left {
-  left: 0;
-}
-.banner-calibration.right {
-  right: 0;
-  text-align: right;
-}
-.banner-calibration b {
-  color: var(--accent);
-  font-weight: 400;
-}
-.banner-axis {
-  position: absolute;
-  top: 394px;
-  width: 146px;
-  height: 1px;
-  background: var(--line);
-}
-.banner-axis.left {
-  left: 111px;
-}
-.banner-axis.right {
-  right: 111px;
-}
-.banner-cross {
-  position: absolute;
-  top: 384px;
-  width: 20px;
-  font: 17px var(--mono);
-  text-align: center;
-  color: var(--diagram);
-}
-.banner-cross.left {
-  left: 246px;
-}
-.banner-cross.right {
-  right: 246px;
-}
-.banner-caption {
-  position: absolute;
-  top: 584px;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  font: 8px/1.8 var(--mono);
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  white-space: nowrap;
-}
+
 .banner-dock {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1588,47 +1489,6 @@ button:hover {
 }
 
 @media (max-width: 1100px) {
-  .banner-field {
-    height: 650px;
-  }
-  .banner-aperture {
-    width: 800px;
-    height: 800px;
-    top: -40px;
-  }
-  .hero-copy {
-    top: 245px;
-    width: 560px;
-  }
-  .hero-copy h1 {
-    font-size: 56px;
-  }
-  .banner-caption {
-    top: 545px;
-  }
-  .banner-calibration {
-    font-size: 7px;
-    top: 350px;
-  }
-  .banner-axis {
-    top: 363px;
-    width: 55px;
-  }
-  .banner-axis.left {
-    left: 95px;
-  }
-  .banner-axis.right {
-    right: 95px;
-  }
-  .banner-cross {
-    top: 353px;
-  }
-  .banner-cross.left {
-    left: 140px;
-  }
-  .banner-cross.right {
-    right: 140px;
-  }
   .banner-dock {
     gap: 22px;
   }
@@ -1647,51 +1507,13 @@ button:hover {
   }
 }
 @media (max-width: 760px) {
-  .banner-field {
-    height: 560px;
-  }
-  .banner-aperture {
-    width: 660px;
-    height: 660px;
-    top: -5px;
-  }
   .banner-meta {
     top: 25px;
     font-size: 7px;
     letter-spacing: 0.04em;
     gap: 18px;
   }
-  .banner-calibration,
-  .banner-axis,
-  .banner-cross {
-    display: none;
-  }
-  .hero-copy {
-    top: 245px;
-    width: min(510px, 100%);
-  }
-  .hero-copy h1 {
-    font-size: clamp(32px, 9.5vw, 50px);
-    letter-spacing: -1.5px;
-    margin-bottom: 22px;
-  }
-  .hero-copy .eyebrow {
-    font-size: 6px;
-    margin-bottom: 20px;
-  }
-  .hero-subtitle {
-    font-size: 7px;
-    max-width: 310px;
-    margin: 0 auto;
-  }
-  .hero-subtitle span {
-    margin: 0 5px;
-  }
-  .banner-caption {
-    top: 485px;
-    font-size: 6px;
-    letter-spacing: 0.04em;
-  }
+
   .banner-dock {
     gap: 20px;
     padding: 19px 0 22px;
@@ -1718,20 +1540,6 @@ button:hover {
   }
 }
 @media (max-width: 420px) {
-  .banner-field {
-    height: 520px;
-  }
-  .banner-aperture {
-    width: 620px;
-    height: 620px;
-    top: -35px;
-  }
-  .hero-copy {
-    top: 211px;
-  }
-  .banner-caption {
-    top: 449px;
-  }
   .banner-dock {
     gap: 15px;
   }
@@ -1740,14 +1548,181 @@ button:hover {
   }
 }
 @media print {
-  .banner-aperture,
   .banner-meta,
-  .banner-calibration,
-  .banner-axis,
-  .banner-cross,
-  .banner-caption,
   .banner-dock,
   .sigil-hint {
+    display: none;
+  }
+}
+
+/* Banner A: enlarged, cropped aperture beside the editorial heading. */
+.banner-field {
+  height: 700px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.banner-aperture {
+  position: absolute;
+  width: 900px;
+  height: 900px;
+  right: -130px;
+  top: -64px;
+  pointer-events: none;
+}
+.hero-copy {
+  position: absolute;
+  z-index: 1;
+  top: 262px;
+  left: 0;
+  width: min(660px, 100%);
+  text-align: left;
+}
+.hero-copy .eyebrow {
+  color: var(--accent);
+  font-size: 8px;
+  margin: 0 0 25px;
+}
+.hero-copy h1 {
+  font: 400 72px/1.04 var(--body);
+  letter-spacing: -2.8px;
+  margin: 0 0 27px;
+}
+.hero-subtitle {
+  font: 10px/1.9 var(--mono);
+  color: var(--muted);
+  margin: 0;
+}
+.hero-subtitle span {
+  color: var(--accent);
+  margin: 0 12px;
+}
+.banner-calibration {
+  position: absolute;
+  left: 0;
+  top: 583px;
+  max-width: 230px;
+  z-index: 1;
+  color: var(--muted);
+  font: 8px/1.8 var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.banner-calibration b {
+  font-weight: 400;
+  color: var(--accent);
+}
+.banner-axis {
+  position: absolute;
+  left: 0;
+  top: 548px;
+  width: 510px;
+  height: 1px;
+  background: var(--line);
+}
+.banner-cross {
+  position: absolute;
+  width: 20px;
+  text-align: center;
+  font: 17px var(--mono);
+  color: var(--diagram);
+}
+.banner-cross.left {
+  left: 0;
+  top: 130px;
+}
+.banner-cross.right {
+  right: 8px;
+  top: 121px;
+}
+@media (max-width: 1100px) {
+  .banner-field {
+    height: 650px;
+  }
+  .banner-aperture {
+    width: 800px;
+    height: 800px;
+    right: -250px;
+    top: -30px;
+  }
+  .hero-copy {
+    top: 245px;
+    width: min(580px, 100%);
+  }
+  .hero-copy h1 {
+    font-size: clamp(44px, 5vw, 56px);
+    letter-spacing: -2px;
+  }
+  .hero-subtitle {
+    font-size: 8px;
+  }
+  .banner-axis {
+    width: 400px;
+    top: 510px;
+  }
+  .banner-calibration {
+    top: 540px;
+  }
+}
+@media (max-width: 900px) {
+  .banner-field {
+    height: 610px;
+  }
+  .banner-aperture {
+    width: 560px;
+    height: 560px;
+    top: -90px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-45%);
+  }
+  .hero-copy {
+    top: 390px;
+    width: min(560px, 100%);
+  }
+  .hero-copy .eyebrow {
+    font-size: 7px;
+    margin-bottom: 20px;
+  }
+  .hero-copy h1 {
+    font-size: clamp(32px, 9.5vw, 48px);
+    letter-spacing: -1.5px;
+    margin-bottom: 22px;
+  }
+  .hero-subtitle {
+    font-size: 8px;
+  }
+  .hero-subtitle span {
+    margin: 0 6px;
+  }
+  .banner-axis,
+  .banner-calibration,
+  .banner-cross {
+    display: none;
+  }
+}
+@media (max-width: 420px) {
+  .banner-field {
+    height: 590px;
+  }
+  .banner-aperture {
+    width: 520px;
+    height: 520px;
+    top: -70px;
+  }
+  .hero-copy {
+    top: 385px;
+  }
+  .hero-subtitle {
+    max-width: 290px;
+    font-size: 7px;
+  }
+}
+@media print {
+  .banner-aperture,
+  .banner-axis,
+  .banner-calibration,
+  .banner-cross {
     display: none;
   }
   .banner-field {
@@ -1756,7 +1731,6 @@ button:hover {
   }
   .hero-copy {
     position: static;
-    transform: none;
     width: 100%;
   }
   .hero-copy h1 {

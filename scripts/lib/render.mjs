@@ -54,14 +54,14 @@ export function renderSite({ site, projects, posts }) {
   const emptyNotes =
     '<div class="empty-notes"><span aria-hidden="true">[ : ]</span><p>No observations published yet.<br><span class="muted">The notebook is open.</span></p></div>';
   function instrument() {
-    return `<section class="observatory" data-banner="centered" aria-labelledby="hero-title"><div class="banner-field">
+    return `<section class="observatory" data-banner="wide" aria-labelledby="hero-title"><div class="banner-field">
       <div class="banner-meta"><span>Observatory / 001</span><span>Active signal / <b id="signal-label" aria-live="polite">Learned systems</b></span></div>
       <div class="banner-aperture" aria-hidden="true">${apertureGlyph()}</div>
       <div class="hero-copy"><p class="eyebrow">Exploring intelligence from within</p><h1 id="hero-title">The structure of<br>learned behavior.</h1><p class="hero-subtitle">Reinforcement learning <span>/</span> Mechanistic interpretability</p></div>
-      <div class="banner-calibration left" aria-hidden="true">Field / 001<br><b>Observe</b></div><div class="banner-calibration right" aria-hidden="true">Signal / latent<br><b>Reveal</b></div>
-      <div class="banner-axis left" aria-hidden="true"></div><div class="banner-axis right" aria-hidden="true"></div>
+      <div class="banner-calibration" aria-hidden="true">Aperture / 001<br><b>Observe → reveal</b><br>7 radial marks / 24 divisions</div>
+      <div class="banner-axis" aria-hidden="true"></div>
       <span class="banner-cross left" aria-hidden="true">+</span><span class="banner-cross right" aria-hidden="true">+</span>
-      <p class="banner-caption">${e(site.tagline)}</p></div>
+      </div>
       <nav class="banner-dock" aria-label="Research project shortcuts">${projects.map((project) => `<a class="banner-project" href="${projectUrl(project)}" data-observe="${project.glyph}" data-sigil-trigger><span class="dock-glyph" aria-hidden="true">${glyph(project.glyph)}</span><span class="dock-copy"><span class="metadata">${pad(project.order)} / ${e(project.area)}</span><span class="dock-title">${e(project.title)}</span></span></a>`).join("")}</nav></section>`;
   }
   const pages = new Map();

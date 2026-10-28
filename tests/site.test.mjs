@@ -50,7 +50,7 @@ test("only the opted-in RL project has reports; the original projects remain pre
   fixture(async ({ root, build, html }) => {
     build();
     const home = await html("");
-    assert.match(home, /data-banner="centered"/);
+    assert.match(home, /data-banner="wide"/);
     assert.match(home, /class="banner-aperture"/);
     for (const sigil of ["sun", "fiber", "eye"]) {
       assert.match(home, new RegExp('data-animated-sigil="' + sigil + '"'));

@@ -96,8 +96,9 @@ have no effect. Content, report expansion, and navigation work without JavaScrip
 
 ## Design behavior
 
-The homepage uses Banner B: a large, hollow 91 × 91 grid aperture surrounding
-the headline, with project shortcuts anchored below it. The aperture remains
+The homepage uses Banner A: a large, hollow 91 × 91 grid aperture beside a
+left-aligned headline, with project shortcuts anchored below it. On narrow
+screens, the enlarged aperture sits above the headline. The aperture remains
 hollow so the headline stays readable. Project interactions update its signal
 label and animate the corresponding local sigil.
 
