@@ -106,7 +106,7 @@ export function renderSite({ site, projects, posts }) {
   pages.set(
     "notes/index.html",
     page(
-      `<header class="page-heading"><h1>Observations, in writing.</h1><p class="page-lead">Research notes, open questions, and things still taking shape.</p></header>${posts.length ? postList(posts, (post) => "/notes/" + post.slug + "/") : emptyNotes}`,
+      `<header class="page-heading"><h1>Observations.</h1><p class="page-lead">Research notes/open questions/various thoughts.</p></header>${posts.length ? postList(posts, (post) => "/notes/" + post.slug + "/") : emptyNotes}`,
       { title: "Field notes", section: "notes" },
     ),
   );
