@@ -13,6 +13,7 @@ import { execFileSync } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { sigilFrames } from "../scripts/lib/glyphs.mjs";
 
 const source = fileURLToPath(new URL("../", import.meta.url));
 async function fixture(fn) {
@@ -49,9 +50,10 @@ test("only the opted-in RL project has reports; the original projects remain pre
   fixture(async ({ root, build, html }) => {
     build();
     const home = await html("");
-    assert.match(home, /class="instrument" data-state="sun"/);
+    assert.match(home, /data-banner="centered"/);
+    assert.match(home, /class="banner-aperture"/);
     for (const sigil of ["sun", "fiber", "eye"]) {
-      assert.match(home, new RegExp('data-state-button="' + sigil + '"'));
+      assert.match(home, new RegExp('data-animated-sigil="' + sigil + '"'));
     }
     for (const slug of ["myelin-segmentation", "aletheias-quest"]) {
       const preview = await html("research/" + slug);
@@ -71,6 +73,7 @@ test("only the opted-in RL project has reports; the original projects remain pre
     }
     const rl = await html("research/world-model-adaptation");
     assert.match(rl, /data-sigil="sun"/);
+    assert.match(rl, /class="study-sigil sigil-toggle"/);
     assert.match(rl, /<details class="report-disclosure">/);
     assert.doesNotMatch(rl, /<details[^>]*\bopen\b/);
     assert.match(rl, /reports\/opening-observation\//);
@@ -85,6 +88,30 @@ test("only the opted-in RL project has reports; the original projects remain pre
     assert.match(report, /<h1>Opening observation<\/h1>/);
     await assert.rejects(readFile(path.join(root, "build/content/site.json")));
   }));
+
+test("solar animation has five held phases with a filled disc before the rays", () => {
+  const frames = sigilFrames("sun");
+  assert.equal(frames.length, 5);
+  const lit = (rows) =>
+    rows.reduce(
+      (count, row) => count + [...row].filter((cell) => cell !== ".").length,
+      0,
+    );
+  for (let index = 1; index < frames.length; index++) {
+    assert.ok(lit(frames[index]) > lit(frames[index - 1]));
+  }
+  assert.equal(frames[0][15][15], ".");
+  assert.notEqual(frames[2][15][15], ".");
+  assert.notEqual(frames[3][15][15], ".");
+  const rays = (rows) =>
+    rows.some((row, y) =>
+      [...row].some(
+        (cell, x) => cell !== "." && Math.hypot(x - 15, y - 15) > 10.5,
+      ),
+    );
+  assert.ok(frames.slice(0, 4).every((rows) => !rays(rows)));
+  assert.ok(rays(frames[4]));
+});
 test("turning reports off removes both notebook UI and previously built report routes", async () =>
   fixture(async ({ root, build, html }) => {
     build();

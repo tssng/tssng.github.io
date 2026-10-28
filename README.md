@@ -19,16 +19,17 @@ Run `npm test` to verify content publication and report opt-in behavior.
 
 ## Where content lives
 
-| Content                        | Source                                 |
-| ------------------------------ | -------------------------------------- |
-| Name, bio, interests, GitHub   | `content/site.json`                    |
-| Project summaries              | `content/projects/<project-slug>.json` |
-| Optional project reports       | `content/reports/<project-slug>/*.md`  |
-| Blog posts                     | `content/posts/*.md`                   |
-| Page layouts and navigation    | `scripts/lib/render.mjs`               |
-| Generated grid sigils          | `scripts/lib/glyphs.mjs`               |
-| Styling and reading layouts    | `public/styles.css`                    |
-| Glyph interactions and filters | `public/site.js`                       |
+| Content                               | Source                                 |
+| ------------------------------------- | -------------------------------------- |
+| Name, bio, interests, GitHub          | `content/site.json`                    |
+| Project summaries                     | `content/projects/<project-slug>.json` |
+| Optional project reports              | `content/reports/<project-slug>/*.md`  |
+| Blog posts                            | `content/posts/*.md`                   |
+| Page layouts and navigation           | `scripts/lib/render.mjs`               |
+| Grid rendering and animation metadata | `scripts/lib/glyphs.mjs`               |
+| Approved grid-frame patterns          | `scripts/lib/sigil-patterns.json`      |
+| Styling and reading layouts           | `public/styles.css`                    |
+| Glyph interactions and filters        | `public/site.js`                       |
 
 The build generates `/`, `/research/`, `/research/<project-slug>/`,
 `/notes/`, `/about/`, and any published article routes. Do not edit `build/`.
@@ -95,16 +96,32 @@ have no effect. Content, report expansion, and navigation work without JavaScrip
 
 ## Design behavior
 
-The homepage instrument switches between the three approved grid sigils: sun for
-RL interpretability, circular cross-section plus longitudinal fiber for myelin,
-and eye for Aletheia’s Quest. Selection, project hover, and keyboard focus reveal
-the corresponding sigil with a restrained fade. The initial sigil is the sun.
-Inactive cells are transparent, so sigils blend into the surrounding background.
-Illuminated cells use amber, with a brighter selected cell. The same SVG matrix
-scales to project thumbnails and summary-page studies.
-Nothing animates continuously, and reduced-motion preferences remove transitions.
-Sigils are abstract project identities, not experimental figures or reported results.
-The long-form typefaces and IBM Plex Mono are self-hosted with their OFL licenses.
+The homepage uses Banner B: a large, hollow 91 × 91 grid aperture surrounding
+the headline, with project shortcuts anchored below it. The aperture remains
+hollow so the headline stays readable. Project interactions update its signal
+label and animate the corresponding local sigil.
+
+Project sigils share 31 × 31 cell maps, defined in
+`scripts/lib/sigil-patterns.json`. Dots are transparent; `s`, `d`, `w`, `a`, and
+`b` encode slate, muted, soft amber, amber, and bright cells. The same maps are
+used in banner shortcuts, research thumbnails, and project summaries:
+
+- `fiber`: 2D cross-section and longitudinal fiber → oblique hollow tube.
+- `eye`: closed eye → half-open eye → open eye.
+- `sun`: crescent → half moon → waxing gibbous → full disc → sun with rays.
+
+Eye and tube states blend over 380 ms. The solar sequence has five discrete
+frames over 620 ms, with no smooth filling or fading between its frames.
+Hover and keyboard focus reveal a sigil; leaving reverses it. On a project
+summary, tap/click the sigil to hold the revealed state, then tap/click again or
+press Escape to return to rest. Project links continue to navigate on touch.
+
+Motion runs only during an interaction. Reduced-motion preferences switch
+immediately between endpoints; hidden tabs settle and stop animation. Without
+JavaScript, all sigils remain in their resting states and navigation still works.
+Inactive cells have no painted background. Sigils are abstract project identities,
+not experimental figures or reported results. Typefaces are self-hosted with
+OFL licenses.
 
 ## Deployment
 

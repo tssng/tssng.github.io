@@ -1,5 +1,5 @@
 import { escape as e, prettyDate } from "./content.mjs";
-import { glyph, SIGILS } from "./glyphs.mjs";
+import { glyph, apertureGlyph, SIGILS } from "./glyphs.mjs";
 
 const aperture =
   '<svg class="aperture" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width=".8"/><path d="M20 2v4m18 14h-4M20 38v-4M2 20h4" stroke="currentColor" stroke-width=".7"/><circle cx="17" cy="18" r="13" fill="var(--bg)"/></svg>';
@@ -43,7 +43,7 @@ export function renderSite({ site, projects, posts }) {
       </head><body class="no-js"><a class="skip-link" href="#main">Skip to content</a><div class="site-shell">${header(section)}<main id="main">${body}</main>${footer()}</div></body></html>`;
   }
   function row(project, detailed = false) {
-    return `<article class="research-item" data-category="${e(project.category)}"><a class="research-row${detailed ? " research-row-detailed" : ""}" href="${projectUrl(project)}" data-observe="${project.glyph}">
+    return `<article class="research-item" data-category="${e(project.category)}"><a class="research-row${detailed ? " research-row-detailed" : ""}" href="${projectUrl(project)}" data-observe="${project.glyph}" data-sigil-trigger>
       <span class="row-number">${pad(project.order)}</span><div class="row-glyph" aria-hidden="true">${glyph(project.glyph)}</div>
       <div class="row-copy"><p class="metadata">${e(project.area)}${project.reports ? ' <span class="entry-mark">/ notebook</span>' : ""}</p><h3>${e(project.title)}</h3><p class="row-summary">${e(project.summary)}</p>${detailed ? `<p class="index-question">${e(project.question)}</p><ul class="tags">${project.tags.map((tag) => `<li>${e(tag)}</li>`).join("")}</ul>` : ""}</div>
       <span class="row-arrow" aria-hidden="true">↗</span></a></article>`;
@@ -54,26 +54,20 @@ export function renderSite({ site, projects, posts }) {
   const emptyNotes =
     '<div class="empty-notes"><span aria-hidden="true">[ : ]</span><p>No observations published yet.<br><span class="muted">The notebook is open.</span></p></div>';
   function instrument() {
-    return `<div class="instrument" data-state="sun"><div class="instrument-meta"><span>Observatory / 001</span><span>Signal / <b id="signal-label" aria-live="polite">${e(SIGILS.sun.signal)}</b></span></div>
-      <div class="instrument-stage" role="img" aria-label="${e(SIGILS.sun.description)}" id="instrument-diagram">
-      ${Object.entries(SIGILS)
-        .map(
-          ([kind, sigil]) =>
-            `<div class="instrument-glyph${kind === "sun" ? " is-active" : ""}" data-glyph="${kind}" data-signal="${e(sigil.signal)}" data-description="${e(sigil.description)}" aria-hidden="true">${glyph(kind)}</div>`,
-        )
-        .join("")}</div>
-      <div class="instrument-bottom"><span class="instrument-coordinate" aria-hidden="true">[ 31 × 31 / project signatures ]</span><div class="state-controls" role="group" aria-label="Project sigil">
-      ${Object.entries(SIGILS)
-        .map(
-          ([kind, sigil]) =>
-            `<button type="button" data-state-button="${kind}" aria-pressed="${kind === "sun"}">${e(sigil.label)}</button>`,
-        )
-        .join("")}</div></div></div>`;
+    return `<section class="observatory" data-banner="centered" aria-labelledby="hero-title"><div class="banner-field">
+      <div class="banner-meta"><span>Observatory / 001</span><span>Active signal / <b id="signal-label" aria-live="polite">Learned systems</b></span></div>
+      <div class="banner-aperture" aria-hidden="true">${apertureGlyph()}</div>
+      <div class="hero-copy"><p class="eyebrow">Exploring intelligence from within</p><h1 id="hero-title">The structure of<br>learned behavior.</h1><p class="hero-subtitle">Reinforcement learning <span>/</span> Mechanistic interpretability</p></div>
+      <div class="banner-calibration left" aria-hidden="true">Field / 001<br><b>Observe</b></div><div class="banner-calibration right" aria-hidden="true">Signal / latent<br><b>Reveal</b></div>
+      <div class="banner-axis left" aria-hidden="true"></div><div class="banner-axis right" aria-hidden="true"></div>
+      <span class="banner-cross left" aria-hidden="true">+</span><span class="banner-cross right" aria-hidden="true">+</span>
+      <p class="banner-caption">${e(site.tagline)}</p></div>
+      <nav class="banner-dock" aria-label="Research project shortcuts">${projects.map((project) => `<a class="banner-project" href="${projectUrl(project)}" data-observe="${project.glyph}" data-sigil-trigger><span class="dock-glyph" aria-hidden="true">${glyph(project.glyph)}</span><span class="dock-copy"><span class="metadata">${pad(project.order)} / ${e(project.area)}</span><span class="dock-title">${e(project.title)}</span></span></a>`).join("")}</nav></section>`;
   }
   const pages = new Map();
   pages.set(
     "index.html",
-    page(`<section class="observatory" aria-labelledby="hero-title">${instrument()}<div class="hero-copy"><p class="eyebrow">Active signal / research by ${e(site.name)}</p><h1 id="hero-title">The structure of<br>learned behavior.</h1><p class="hero-subtitle">Reinforcement learning <span>/</span> Mechanistic interpretability</p></div><div class="hero-baseline"><span>Exploring intelligence from within</span><a href="/research/">Enter the research index <span aria-hidden="true">↓</span></a></div></section>
+    page(`${instrument()}
     <section class="home-section" aria-labelledby="research-title"><div class="section-heading"><h2 id="research-title"><span>01 /</span> Research</h2><a href="/research/">Index [${String(projects.length).padStart(2, "0")}] ↗</a></div><div class="research-list">${projects.map((project) => row(project)).join("")}</div></section>
     <section class="home-section notes-preview" aria-labelledby="notes-title"><div class="section-heading"><h2 id="notes-title"><span>02 /</span> Field notes</h2><a href="/notes/">All entries +</a></div>${posts.length ? postList(posts.slice(0, 3), (post) => "/notes/" + post.slug + "/") : emptyNotes}</section>`),
   );
@@ -99,7 +93,7 @@ export function renderSite({ site, projects, posts }) {
       page(
         `<div class="breadcrumb"><a href="/research/">Research</a><span>/</span><span>${pad(project.order)}</span></div><header class="project-heading"><p class="eyebrow">${e(project.area)} / project ${pad(project.order)}</p><h1>${e(project.title)}</h1><p class="project-deck">${e(project.summary)}</p></header>
       <section class="project-overview" aria-labelledby="question-title"><div class="abstract"><p class="eyebrow">01 / the question</p><h2 id="question-title">${e(project.question)}</h2><div class="abstract-body">${project.abstract.map((paragraph) => `<p>${e(paragraph)}</p>`).join("")}</div><ul class="tags">${project.tags.map((tag) => `<li>${e(tag)}</li>`).join("")}</ul>${project.links?.length ? `<div class="project-links">${project.links.map((link) => `<a href="${e(link.url)}">${e(link.label)} ↗</a>`).join("")}</div>` : ""}</div>
-      <figure class="project-study"><div class="study-label"><span>Study / ${pad(project.order)}</span><span>${e(SIGILS[project.glyph].label)}</span></div><div class="study-sigil" aria-hidden="true">${glyph(project.glyph)}</div><figcaption>Project sigil / abstract symbol</figcaption></figure></section>
+      <figure class="project-study"><div class="study-label"><span>Study / ${pad(project.order)}</span><span>${e(SIGILS[project.glyph].label)}</span></div><button class="study-sigil sigil-toggle" type="button" data-sigil-trigger data-observe="${project.glyph}" aria-label="Hold the ${e(SIGILS[project.glyph].revealed)} sigil revealed" aria-pressed="false" disabled>${glyph(project.glyph)}</button><figcaption>Project sigil / abstract symbol<span class="sigil-hint">Hover, focus, or tap to reveal</span></figcaption></figure></section>
       ${reports}<div class="page-return"><a href="/research/">← Return to the research index</a></div>`,
         {
           title: project.title,
