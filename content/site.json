@@ -13,5 +13,23 @@
     "Mechanistic interpretability",
     "AI safety",
     "World model adaptation"
-  ]
+  ],
+  "background": [
+    {
+      "label": "Education",
+      "text": "I graduated from Boston University in 2025 with a B.S. in Computer Engineering."
+    },
+    {
+      "label": "Current work",
+      "text": "I’m currently working at the Boston University Neurophotonics Center."
+    },
+    {
+      "label": "Citizenship",
+      "text": "I am a U.S. citizen."
+    }
+  ],
+  "socials": [
+    { "label": "GitHub", "url": "https://github.com/tssng" }
+  ],
+  "resume": null
 }

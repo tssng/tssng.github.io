@@ -14,6 +14,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { sigilFrames } from "../scripts/lib/glyphs.mjs";
+import { loadContent } from "../scripts/lib/content.mjs";
 
 const source = fileURLToPath(new URL("../", import.meta.url));
 async function fixture(fn) {
@@ -48,6 +49,13 @@ async function editProject(root, slug, edit) {
 }
 test("only the opted-in RL project has reports; the original projects remain previews", async () =>
   fixture(async ({ root, build, html }) => {
+    await writeFile(
+      path.join(
+        root,
+        "content/reports/world-model-adaptation/publication-check.md",
+      ),
+      "---\ntitle: Publication check\ndate: 2026-10-27\nsummary: A controlled report fixture.\nkind: report\ndraft: false\n---\n\nA controlled publication fixture.\n",
+    );
     build();
     const home = await html("");
     assert.match(home, /data-banner="wide"/);
@@ -76,16 +84,15 @@ test("only the opted-in RL project has reports; the original projects remain pre
     assert.match(rl, /class="study-sigil sigil-toggle"/);
     assert.match(rl, /<details class="report-disclosure">/);
     assert.doesNotMatch(rl, /<details[^>]*\bopen\b/);
-    assert.match(rl, /reports\/opening-observation\//);
-    assert.match(rl, /Placeholder \/ no results reported/);
+    assert.match(rl, /reports\/publication-check\//);
     const report = await html(
-      "research/world-model-adaptation/reports/opening-observation",
+      "research/world-model-adaptation/reports/publication-check",
     );
     assert.match(report, /data-reading="true"/);
     assert.match(report, /data-theme="dark"/);
     assert.doesNotMatch(report, /data-reading-toggle|theme\.js/);
-    assert.match(report, /No experiment/);
-    assert.match(report, /<h1>Opening observation<\/h1>/);
+    assert.match(report, /A controlled publication fixture/);
+    assert.match(report, /<h1>Publication check<\/h1>/);
     await assert.rejects(readFile(path.join(root, "build/content/site.json")));
   }));
 
@@ -112,9 +119,49 @@ test("solar animation has five held phases with a filled disc before the rays", 
   assert.ok(frames.slice(0, 4).every((rows) => !rays(rows)));
   assert.ok(rays(frames[4]));
 });
+test("About preserves authored biography and supports optional social and resume links", async () =>
+  fixture(async ({ root, build, html }) => {
+    const filename = path.join(root, "content/site.json");
+    const site = JSON.parse(await readFile(filename, "utf8"));
+    site.bio = ["A biography that remains exactly as authored."];
+    site.background = [
+      { label: "Education", text: "A controlled education fixture." },
+    ];
+    site.socials = [{ label: "GitHub", url: "https://github.com/tssng" }];
+    site.resume = null;
+    await writeFile(filename, JSON.stringify(site));
+    build();
+    const about = await html("about");
+    assert.match(about, /A biography that remains exactly as authored/);
+    assert.match(about, /A controlled education fixture/);
+    assert.match(about, /class="social-links"/);
+    assert.doesNotMatch(about, /class="resume-link"/);
+    await writeFile(
+      path.join(root, "public/assets/resume-check.pdf"),
+      "%PDF-1.4\nFixture only",
+    );
+    site.resume = "/assets/resume-check.pdf";
+    await writeFile(filename, JSON.stringify(site));
+    build();
+    assert.match(
+      await html("about"),
+      /class="resume-link" href="\/assets\/resume-check.pdf"/,
+    );
+    site.resume = "javascript:alert(1)";
+    await writeFile(filename, JSON.stringify(site));
+    assert.throws(build, /site.resume must use HTTPS/);
+  }));
 test("turning reports off removes both notebook UI and previously built report routes", async () =>
   fixture(async ({ root, build, html }) => {
+    await writeFile(
+      path.join(
+        root,
+        "content/reports/world-model-adaptation/publication-check.md",
+      ),
+      "---\ntitle: Publication check\ndate: 2026-10-27\nsummary: A controlled report fixture.\nkind: report\ndraft: false\n---\n\nA controlled publication fixture.\n",
+    );
     build();
+    await html("research/world-model-adaptation/reports/publication-check");
     await editProject(root, "world-model-adaptation", (project) => ({
       ...project,
       reports: false,
@@ -130,11 +177,12 @@ test("turning reports off removes both notebook UI and previously built report r
       /reports-section|report-disclosure|opening-observation/,
     );
     await assert.rejects(
-      html("research/world-model-adaptation/reports/opening-observation"),
+      html("research/world-model-adaptation/reports/publication-check"),
     );
   }));
 test("adding a project and an opted-in report needs content files only", async () =>
   fixture(async ({ root, build, html }) => {
+    const existing = await loadContent(root);
     const project = JSON.parse(
       await readFile(
         path.join(root, "content/projects/_template.json"),
@@ -145,6 +193,8 @@ test("adding a project and an opted-in report needs content files only", async (
       path.join(root, "content/projects/new-research.json"),
       JSON.stringify({
         ...project,
+        order:
+          Math.max(...existing.projects.map((project) => project.order), 0) + 1,
         title: "A new research question",
         reports: true,
       }),
@@ -156,7 +206,10 @@ test("adding a project and an opted-in report needs content files only", async (
     );
     build();
     assert.match(await html(""), /A new research question/);
-    assert.match(await html("research"), /4 projects/);
+    assert.match(
+      await html("research"),
+      new RegExp(existing.projects.length + 1 + " projects"),
+    );
     assert.match(await html("research/new-research"), /reports\/first-check\//);
     assert.match(
       await html("research/new-research/reports/first-check"),

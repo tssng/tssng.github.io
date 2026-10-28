@@ -107,6 +107,44 @@ export async function loadContent(root) {
       throw new Error("site." + key + " must be a nonempty array.");
     site[key].forEach((item) => text(item, "site." + key));
   }
+  if (site.background !== undefined) {
+    if (!Array.isArray(site.background))
+      throw new Error("site.background must be an array.");
+    for (const fact of site.background) {
+      text(fact.label, "site.background label");
+      text(fact.text, "site.background text");
+    }
+  }
+  if (site.socials !== undefined) {
+    if (!Array.isArray(site.socials))
+      throw new Error("site.socials must be an array.");
+    for (const link of site.socials) {
+      text(link.label, "site.socials label");
+      let url;
+      try {
+        url = new URL(link.url);
+      } catch {
+        throw new Error("site.socials links must be valid HTTPS URLs.");
+      }
+      if (url.protocol !== "https:")
+        throw new Error("site.socials links must use HTTPS.");
+    }
+  }
+  if (site.resume != null) {
+    text(site.resume, "site.resume");
+    if (!site.resume.startsWith("/") || site.resume.startsWith("//")) {
+      let url;
+      try {
+        url = new URL(site.resume);
+      } catch {
+        throw new Error(
+          "site.resume must be an HTTPS URL or a local path such as /assets/resume.pdf.",
+        );
+      }
+      if (url.protocol !== "https:")
+        throw new Error("site.resume must use HTTPS or a local site path.");
+    }
+  }
   const directory = path.join(root, "content/projects");
   const projects = [];
   for (const filename of (await readdir(directory)).sort()) {

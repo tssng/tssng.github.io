@@ -71,7 +71,6 @@ function animateSigil(element) {
   return controller;
 }
 
-const signalLabel = document.querySelector("#signal-label");
 document.querySelectorAll("[data-sigil-trigger]").forEach((trigger) => {
   const controllers = [
     ...trigger.querySelectorAll("[data-animated-sigil]"),
@@ -120,23 +119,6 @@ document.querySelectorAll("[data-sigil-trigger]").forEach((trigger) => {
       trigger.setAttribute("aria-pressed", "false");
       update();
     });
-  }
-  // The large aperture stays hollow so the heading remains readable.
-  // Project interactions update its observation label and the local sigil.
-  if (signalLabel) {
-    const showObservation = () => {
-      const project = trigger.querySelector(".dock-title, h3");
-      if (project) signalLabel.textContent = project.textContent;
-    };
-    const restoreObservation = () => {
-      if (!hovered && !focused) signalLabel.textContent = "Learned systems";
-    };
-    trigger.addEventListener("pointerenter", (event) => {
-      if (event.pointerType !== "touch") showObservation();
-    });
-    trigger.addEventListener("focus", showObservation);
-    trigger.addEventListener("pointerleave", restoreObservation);
-    trigger.addEventListener("blur", restoreObservation);
   }
 });
 motionPreference.addEventListener("change", () =>

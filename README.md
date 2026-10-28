@@ -99,8 +99,7 @@ have no effect. Content, report expansion, and navigation work without JavaScrip
 The homepage uses Banner A: a large, hollow 91 × 91 grid aperture beside a
 left-aligned headline, with project shortcuts anchored below it. On narrow
 screens, the enlarged aperture sits above the headline. The aperture remains
-hollow so the headline stays readable. Project interactions update its signal
-label and animate the corresponding local sigil.
+hollow so the headline stays readable. Project interactions animate the corresponding local sigil.
 
 Project sigils share 31 × 31 cell maps, defined in
 `scripts/lib/sigil-patterns.json`. Dots are transparent; `s`, `d`, `w`, `a`, and
@@ -135,3 +134,17 @@ Builds validate metadata, configuration, and local asset/article links before
 replacing the last working `build/` directory. Disabled reports and drafts do not
 exist in the output. This is a publication option, not authentication: source
 committed to a public repository is still public even when omitted from the site.
+
+## About details and links
+
+`content/site.json` keeps the original biography in `bio` and supports these
+additional fields:
+
+- `background`: a list of `{ "label": "Education", "text": "..." }` entries.
+- `socials`: a list of `{ "label": "GitHub", "url": "https://github.com/tssng" }` links.
+- `resume`: `null` to hide the résumé link, an HTTPS URL, or a local path such as
+  `/assets/resume.pdf`. Put a local PDF in `public/assets/` before building.
+
+The About page currently shows GitHub only. Add a résumé URL when ready; no
+placeholder link is published. Project summaries, report bodies, and biography
+copy can be edited without having to preserve specific sentences for the tests.
