@@ -1,6 +1,6 @@
 {
   "order": 1,
-  "title": "Myelin segmentation",
+  "title": "3D Myelin fiber reconstruction",
   "area": "Computational imaging",
   "category": "imaging",
   "glyph": "fiber",
@@ -8,7 +8,7 @@
   "question": "What myelin structure can we recover from optical images, and where does the evidence run out?",
   "abstract": [
     "This project explores learned segmentation and reconstruction of myelin from optical focal stacks. It brings together representation learning, weak supervision, and evaluation of three-dimensional material recovery.",
-    "The central challenge is to distinguish image-supported structure from plausible geometry. Material recovery, fiber continuity, and depth need separate evaluation; visual plausibility alone does not establish validated anatomy."
+    "The central challenge is to distinguish image-supported structure from plausible geometry. Our current approach revolves around physics-informed U-Net style model alongside an optical forward model for synthetic data generation"
   ],
   "tags": ["Inverse problems", "3D learning", "Microscopy"]
 }
