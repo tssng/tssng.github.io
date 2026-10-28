@@ -138,7 +138,7 @@ export function renderSite({ site, projects, posts }) {
   pages.set(
     "about/index.html",
     page(
-      `<header class="page-heading"><h1>Making hidden<br>structure visible.</h1></header><div class="about-layout"><div class="about-prose">${site.bio.map((paragraph) => `<p>${e(paragraph)}</p>`).join("")}</div><aside class="interest-index"><h2>Current interests</h2><ul>${site.interests.map((interest) => `<li>${e(interest)}</li>`).join("")}</ul></aside></div><div class="about-details">${background}${links}</div>`,
+      `<header class="page-heading"><h1>A little bit<br>about me.</h1></header><div class="about-layout"><div class="about-prose">${site.bio.map((paragraph) => `<p>${e(paragraph)}</p>`).join("")}</div><aside class="interest-index"><h2>Current interests</h2><ul>${site.interests.map((interest) => `<li>${e(interest)}</li>`).join("")}</ul></aside></div><div class="about-details">${background}${links}</div>`,
       { title: "About", section: "about" },
     ),
   );
