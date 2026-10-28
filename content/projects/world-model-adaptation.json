@@ -5,7 +5,7 @@
   "category": "rl",
   "glyph": "sun",
   "summary": "Studying how world-model agents revise outdated information when an environment’s physics changes.",
-  "question": "When physics changes, how does a world-model agent replace outdated information—and can we identify the internal computations responsible for successful or failed adaptation?",
+  "question": "When physics changes, how does a world-model agent replace outdated information? Can we identify the internal computations responsible for successful or failed adaptation?",
   "abstract": [
     "A learned world model can retain assumptions that stop matching its environment. This project asks how an agent responds when the underlying physics changes: which information is retained, which information is replaced, and how those changes affect behavior.",
     "The interpretability question is causal: can we identify the internal computations that distinguish successful adaptation from persistent reliance on outdated information?", 
