@@ -58,8 +58,8 @@ test("only the opted-in RL project has reports; the original projects remain pre
     );
     build();
     const home = await html("");
-    assert.match(home, /data-banner="wide"/);
-    assert.match(home, /class="banner-aperture"/);
+    assert.match(home, /data-world/);
+    assert.match(home, /src="\/gridworld.js"/);
     for (const sigil of ["sun", "fiber", "eye"]) {
       assert.match(home, new RegExp('data-animated-sigil="' + sigil + '"'));
     }
@@ -206,10 +206,7 @@ test("adding a project and an opted-in report needs content files only", async (
     );
     build();
     assert.match(await html(""), /A new research question/);
-    assert.match(
-      await html("research"),
-      new RegExp(existing.projects.length + 1 + " projects"),
-    );
+    assert.equal((await html("research")).match(/class="research-item"/g).length, existing.projects.length + 1);
     assert.match(await html("research/new-research"), /reports\/first-check\//);
     assert.match(
       await html("research/new-research/reports/first-check"),
@@ -264,3 +261,42 @@ test("invalid configuration and broken article links preserve the last good buil
     assert.throws(build, /Broken local link/);
     assert.equal(await html(""), home);
   }));
+
+test("the gridworld reaches the goal from every reachable cell in both layouts", async () => {
+  const { createWorld, advance, COLS } = await import('../public/world-model.js');
+  for (let layout = 0; layout < 2; layout++) {
+    const world = createWorld(layout);
+    for (let start = 0; start < world.distance.length; start++) {
+      if (world.distance[start] <= 1) continue;
+      const state = { x: start % COLS, y: Math.floor(start / COLS), trail: [], arrived: false };
+      for (let step = 0; !state.arrived && step <= world.distance[start]; step++) {
+        const before = world.distance[state.y * COLS + state.x];
+        advance(world, state);
+        const k = state.y * COLS + state.x;
+        assert.equal(world.walls[k], 0, 'the agent cannot enter a wall');
+        if (!state.arrived) assert.equal(world.distance[k], before - 1);
+      }
+      assert.ok(state.arrived, `layout ${layout}, cell ${start} must reach the sun`);
+    }
+  }
+});
+
+test("moving walls relocates covered agents and the static sketch has complete layers", async () => {
+  const { createWorld, initialState, relocate, drawWorld, COLS, ROWS } = await import('../public/world-model.js');
+  const a = createWorld(0), b = createWorld(1);
+  for (let k = 0; k < a.distance.length; k++) {
+    if (a.distance[k] <= 1) continue;
+    const state = { x: k % COLS, y: Math.floor(k / COLS), trail: [k], arrived: true };
+    relocate(b, state);
+    assert.ok(b.distance[state.y * COLS + state.x] > 1);
+    assert.equal(state.arrived, false);
+    assert.deepEqual(state.trail, []);
+  }
+  for (const policy of [false, true]) {
+    const art = drawWorld(a, initialState(a), policy);
+    for (const layer of Object.values(art)) {
+      assert.equal(layer.split('\n').length, ROWS);
+      assert.ok(layer.split('\n').every(row => row.length === COLS));
+    }
+  }
+});

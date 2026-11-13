@@ -31,5 +31,6 @@
   "socials": [
     { "label": "GitHub", "url": "https://github.com/tssng" }
   ],
-  "resume": null
+  "resume": null,
+  "introduction": "I work on reinforcement learning and interpretability. Mostly I want to know what an agent has actually learned, and what happens to that when the world it learned in stops being true."
 }

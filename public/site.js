@@ -127,22 +127,3 @@ motionPreference.addEventListener("change", () =>
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) animations.forEach((animation) => animation.settle());
 });
-
-document.querySelectorAll("[data-filter]").forEach((button) =>
-  button.addEventListener("click", () => {
-    document
-      .querySelectorAll("[data-filter]")
-      .forEach((item) =>
-        item.setAttribute("aria-pressed", String(item === button)),
-      );
-    let visible = 0;
-    document.querySelectorAll("[data-category]").forEach((project) => {
-      project.hidden =
-        button.dataset.filter !== "all" &&
-        project.dataset.category !== button.dataset.filter;
-      if (!project.hidden) visible += 1;
-    });
-    document.querySelector("#project-count").textContent =
-      visible + (visible === 1 ? " project" : " projects");
-  }),
-);

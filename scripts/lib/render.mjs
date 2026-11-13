@@ -1,28 +1,19 @@
 import { escape as e, prettyDate } from "./content.mjs";
-import { glyph, apertureGlyph, SIGILS } from "./glyphs.mjs";
+import { glyph, SIGILS } from "./glyphs.mjs";
+import { createWorld, initialState, drawWorld } from "../../public/world-model.js";
 
-const aperture =
-  '<svg class="aperture" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width=".8"/><path d="M20 2v4m18 14h-4M20 38v-4M2 20h4" stroke="currentColor" stroke-width=".7"/><circle cx="17" cy="18" r="13" fill="var(--bg)"/></svg>';
 const projectUrl = (project) => "/research/" + project.slug + "/";
 const reportUrl = (project, post) =>
   projectUrl(project) + "reports/" + post.slug + "/";
 
 export function renderSite({ site, projects, posts }) {
-  function header(section) {
-    return `<header class="site-header"><a class="identity" href="/" aria-label="${e(site.name)}, home">${aperture}<span>${e(site.name)}<span class="identity-sub"> / ${e(site.identity)}</span></span></a>
-      <nav aria-label="Main navigation">${[
-        ["research", "Research"],
-        ["notes", "Notes"],
-        ["about", "About"],
-      ]
-        .map(
-          ([key, label]) =>
-            `<a href="/${key}/"${section === key ? ' aria-current="page"' : ""}>${label}</a>`,
-        )
-        .join("")}</nav></header>`;
+  const fullName = `${site.name} ${site.identity}`;
+  function header(section, home = false) {
+    return `<header class="site-header${home ? " home-header" : ""}">${home ? `<h1 class="identity">${e(fullName)}</h1>` : `<a class="identity" href="/">${e(fullName)}</a>`}
+      <nav aria-label="Main navigation">${[["research", "Research"], ["notes", "Notes"], ["about", "About"]].map(([key, label]) => `<a href="/${key}/"${section === key ? ' aria-current="page"' : ""}>${label}</a>`).join("")}</nav></header>`;
   }
   function footer() {
-    return `<footer class="site-footer"><a class="footer-identity" href="/">${e(site.name)} / ${e(site.identity)}</a><p>${e(site.tagline)}</p><a href="${e(site.github)}">GitHub ↗</a></footer>`;
+    return `<footer class="site-footer"><a href="/">${e(fullName)}</a><a href="${e(site.github)}">GitHub</a></footer>`;
   }
   function page(
     body,
@@ -31,65 +22,60 @@ export function renderSite({ site, projects, posts }) {
       description = site.description,
       section = "",
       reading = false,
+      home = false,
     } = {},
   ) {
     return `<!doctype html><html lang="en" data-theme="dark"${reading ? ' data-reading="true"' : ""}><head>
       <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>${e(title ? title + " / " + site.name : site.name + " / " + site.identity)}</title>
-      <meta name="description" content="${e(description)}"><meta name="theme-color" content="#0a0f0d">
-      <meta property="og:title" content="${e(title || site.name + " / " + site.identity)}"><meta property="og:description" content="${e(description)}"><meta property="og:type" content="${reading ? "article" : "website"}">
-      <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><script src="/site.js" defer></script>
-      </head><body class="no-js"><a class="skip-link" href="#main">Skip to content</a><div class="site-shell">${header(section)}<main id="main">${body}</main>${footer()}</div></body></html>`;
+      <title>${e(title ? title + " / " + site.name : fullName)}</title>
+      <meta name="description" content="${e(description)}"><meta name="theme-color" content="#131313">
+      <meta property="og:title" content="${e(title || fullName)}"><meta property="og:description" content="${e(description)}"><meta property="og:type" content="${reading ? "article" : "website"}">
+      <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><script src="/site.js" defer></script>${home ? '<script type="module" src="/gridworld.js"></script>' : ""}
+      </head><body class="no-js${home ? " home-page" : ""}"><a class="skip-link" href="#main">Skip to content</a><div class="site-shell">${header(section, home)}<main id="main">${body}</main>${footer()}</div></body></html>`;
   }
-  function row(project, detailed = false) {
-    return `<article class="research-item" data-category="${e(project.category)}"><a class="research-row${detailed ? " research-row-detailed" : ""}" href="${projectUrl(project)}" data-observe="${project.glyph}" data-sigil-trigger>
-      <div class="row-glyph" aria-hidden="true">${glyph(project.glyph)}</div>
-      <div class="row-copy"><p class="metadata">${e(project.area)}${project.reports ? ' <span class="entry-mark">/ notebook</span>' : ""}</p><h3>${e(project.title)}</h3><p class="row-summary">${e(project.summary)}</p>${detailed ? `<p class="index-question">${e(project.question)}</p><ul class="tags">${project.tags.map((tag) => `<li>${e(tag)}</li>`).join("")}</ul>` : ""}</div>
-      <span class="row-arrow" aria-hidden="true">↗</span></a></article>`;
+  function row(project, heading = "h3") {
+    return `<article class="research-item"><a class="research-row" href="${projectUrl(project)}" data-sigil-trigger>
+      <div class="row-copy"><${heading}>${e(project.title)}</${heading}><p class="row-summary">${e(project.summary)}</p></div>
+      <div class="row-glyph" aria-hidden="true">${glyph(project.glyph)}</div></a></article>`;
   }
   function postList(entries, href) {
-    return `<ol class="post-list">${entries.map((post) => `<li><a class="post-row" href="${href(post)}"><div><h3>${e(post.title)}</h3><p>${e(post.summary)}</p>${post.kind === "placeholder" ? '<span class="placeholder-label">Placeholder / no results reported</span>' : ""}</div><time datetime="${post.date}">${prettyDate(post.date)}</time><span aria-hidden="true">↗</span></a></li>`).join("")}</ol>`;
+    return `<ol class="post-list">${entries.map((post) => `<li><a class="post-row" href="${href(post)}"><div><h3>${e(post.title)}</h3><p>${e(post.summary)}</p></div><time datetime="${post.date}">${prettyDate(post.date)}</time></a></li>`).join("")}</ol>`;
   }
-  const emptyNotes =
-    '<div class="empty-notes"><p>No observations published yet.<br><span class="muted">The notebook is open.</span></p></div>';
-  function instrument() {
-    return `<section class="observatory" data-banner="wide" aria-labelledby="hero-title"><div class="banner-field">
-      <div class="banner-aperture" aria-hidden="true">${apertureGlyph()}</div>
-      <div class="hero-copy"><h1 id="hero-title">Exploring the structure<br>of learned behavior.</h1><p class="hero-subtitle">Reinforcement learning <span>/</span> Mechanistic interpretability</p></div>
-      </div>
-      <nav class="banner-dock" aria-label="Research project shortcuts">${projects.map((project) => `<a class="banner-project" href="${projectUrl(project)}" data-observe="${project.glyph}" data-sigil-trigger><span class="dock-glyph" aria-hidden="true">${glyph(project.glyph)}</span><span class="dock-copy"><span class="metadata">${e(project.area)}</span><span class="dock-title">${e(project.title)}</span></span></a>`).join("")}</nav></section>`;
+  const emptyNotes = '<p class="empty-notes">Nothing here yet.</p>';
+  function worldSketch() {
+    const world = createWorld(0);
+    const state = initialState(world);
+    const art = drawWorld(world, state);
+    return `<figure class="world-sketch"><div class="world-art" role="img" aria-label="An ASCII maze. An at-sign follows a path through walls toward a sun." data-world>
+      ${["field", "walls", "sun", "trail"].map(layer => `<pre class="world-${layer}" data-world-layer="${layer}" aria-hidden="true">${e(art[layer])}</pre>`).join("")}
+      <span class="world-agent" aria-hidden="true" style="left:${state.x / 72 * 100}%;top:${state.y / 24 * 100}%">@</span></div>
+      <figcaption><p>The @ is trying to reach the sun.</p><div class="world-controls" hidden><button type="button" data-world-action="walls">Move the walls</button><button type="button" data-world-action="policy" aria-pressed="false">Show policy</button><button type="button" data-world-action="pause" aria-pressed="false">Pause</button></div></figcaption>
+      <details class="world-explanation"><summary>How it works</summary><p>This is a pathfinding sketch: each move follows the shortest route to the sun. The characters show distance to the goal; the arrows show the next move. When the walls change, the route is recalculated. There’s no trained model behind this one.</p></details><span class="sr-only" role="status" data-world-status></span></figure>`;
   }
   const pages = new Map();
-  pages.set(
-    "index.html",
-    page(`${instrument()}
-    <section class="home-section" aria-labelledby="research-title"><div class="section-heading"><h2 id="research-title">Research</h2><a href="/research/">All projects ↗</a></div><div class="research-list">${projects.map((project) => row(project)).join("")}</div></section>
-    <section class="home-section notes-preview" aria-labelledby="notes-title"><div class="section-heading"><h2 id="notes-title">Field notes</h2><a href="/notes/">All notes ↗</a></div>${posts.length ? postList(posts.slice(0, 3), (post) => "/notes/" + post.slug + "/") : emptyNotes}</section>`),
-  );
-  const categories = [...new Set(projects.map((project) => project.category))];
-  pages.set(
-    "research/index.html",
-    page(
-      `<header class="page-heading"><h1>Questions in focus.</h1><p class="page-lead">Research at the boundary between what a system does<br class="desktop-break"> and what we can understand about it.</p></header>
-    <div class="research-filter" role="group" aria-label="Filter research"><button type="button" data-filter="all" aria-pressed="true">[ All ]</button>${categories.map((category) => `<button type="button" data-filter="${e(category)}" aria-pressed="false">${e({ rl: "RL × interpretability", imaging: "Imaging", interpretability: "Model behavior" }[category] || category)}</button>`).join("")}<span id="project-count" role="status" aria-live="polite">${projects.length} projects</span></div>
-    <div class="research-list research-index">${projects.map((project) => row(project, true)).join("")}</div>`,
-      { title: "Research", section: "research" },
-    ),
-  );
+  pages.set("index.html", page(
+    `<section class="home-intro" aria-label="Introduction"><p>${e(site.introduction || site.bio[0])}</p></section>
+    ${worldSketch()}
+    <section class="home-section" aria-labelledby="research-title"><div class="section-heading"><h2 id="research-title">Research</h2></div><div class="research-list">${projects.map(project => row(project)).join("")}</div></section>
+    ${posts.length ? `<section class="home-section" aria-labelledby="notes-title"><div class="section-heading"><h2 id="notes-title">Notes</h2><a href="/notes/">All notes</a></div>${postList(posts.slice(0, 3), post => "/notes/" + post.slug + "/")}</section>` : ""}
+    <section class="home-section home-about" aria-labelledby="about-title"><h2 id="about-title">About</h2><div>${(site.background || []).slice(0, 2).map(fact => `<p>${e(fact.text)}</p>`).join("")}<a href="/about/">More about me</a></div></section>`, {home: true}));
+  pages.set("research/index.html", page(
+    `<header class="page-heading"><h1>Research</h1></header><div class="research-list research-index">${projects.map(project => row(project, "h2")).join("")}</div>`,
+    {title: "Research", section: "research"}));
   for (const project of projects) {
     const reports =
       project.reports === true
-        ? `<section class="reports-section" aria-labelledby="reports-title"><div class="section-heading"><h2 id="reports-title">Research notebook</h2></div>
-      <details class="report-disclosure"><summary><span><span class="disclosure-indicator" aria-hidden="true">+</span> Research reports & progress</span><span class="report-count">${project.entries.length} ${project.entries.length === 1 ? "entry" : "entries"}</span></summary>
-      <div class="report-entries">${project.entries.length ? postList(project.entries, (post) => reportUrl(project, post)) : '<p class="muted">No notebook entries published yet.</p>'}</div></details></section>`
+        ? `<section class="reports-section" aria-labelledby="reports-title"><div class="section-heading"><h2 id="reports-title">Reports & progress</h2></div>
+      <details class="report-disclosure"><summary><span>Read the entries</span><span class="report-count">${project.entries.length} ${project.entries.length === 1 ? "entry" : "entries"}</span></summary>
+      <div class="report-entries">${project.entries.length ? postList(project.entries, (post) => reportUrl(project, post)) : '<p class="muted">No entries yet.</p>'}</div></details></section>`
         : "";
     pages.set(
       "research/" + project.slug + "/index.html",
       page(
-        `<div class="breadcrumb"><a href="/research/">← Research</a></div><header class="project-heading"><p class="eyebrow">${e(project.area)}</p><h1>${e(project.title)}</h1><p class="project-deck">${e(project.summary)}</p></header>
-      <section class="project-overview" aria-labelledby="question-title"><div class="abstract"><h2 id="question-title">${e(project.question)}</h2><div class="abstract-body">${project.abstract.map((paragraph) => `<p>${e(paragraph)}</p>`).join("")}</div><ul class="tags">${project.tags.map((tag) => `<li>${e(tag)}</li>`).join("")}</ul>${project.links?.length ? `<div class="project-links">${project.links.map((link) => `<a href="${e(link.url)}">${e(link.label)} ↗</a>`).join("")}</div>` : ""}</div>
-      <figure class="project-study"><button class="study-sigil sigil-toggle" type="button" data-sigil-trigger data-observe="${project.glyph}" aria-label="Hold the ${e(SIGILS[project.glyph].revealed)} sigil revealed" aria-pressed="false" disabled>${glyph(project.glyph)}</button></figure></section>
-      ${reports}<div class="page-return"><a href="/research/">← Return to the research index</a></div>`,
+        `<div class="breadcrumb"><a href="/research/">← All research</a></div>
+      <header class="project-heading"><h1>${e(project.title)}</h1><button class="study-sigil sigil-toggle" type="button" data-sigil-trigger aria-label="Hold the ${e(SIGILS[project.glyph].revealed)} sigil revealed" aria-pressed="false" disabled>${glyph(project.glyph)}</button></header>
+      <section class="project-overview" aria-labelledby="question-title"><div class="abstract"><h2 id="question-title">${e(project.question)}</h2><div class="abstract-body">${project.abstract.map(paragraph => `<p>${e(paragraph)}</p>`).join("")}</div>${project.links?.length ? `<div class="project-links">${project.links.map(link => `<a href="${e(link.url)}">${e(link.label)}</a>`).join("")}</div>` : ""}</div></section>
+      ${reports}<div class="page-return"><a href="/research/">← All research</a></div>`,
         {
           title: project.title,
           description: project.summary,
@@ -106,19 +92,19 @@ export function renderSite({ site, projects, posts }) {
   pages.set(
     "notes/index.html",
     page(
-      `<header class="page-heading"><h1>Observations.</h1><p class="page-lead">Research notes/open questions/various thoughts.</p></header>${posts.length ? postList(posts, (post) => "/notes/" + post.slug + "/") : emptyNotes}`,
-      { title: "Field notes", section: "notes" },
+      `<header class="page-heading"><h1>Notes</h1></header>${posts.length ? postList(posts, post => "/notes/" + post.slug + "/") : emptyNotes}`,
+      { title: "Notes", section: "notes" },
     ),
   );
   for (const post of posts)
     pages.set("notes/" + post.slug + "/index.html", article(post));
   function article(post, project) {
     const back = project ? projectUrl(project) : "/notes/";
-    const backLabel = project ? project.title : "Field notes";
+    const backLabel = project ? project.title : "Notes";
     return page(
       `<div class="reading-toolbar"><a href="${back}">← ${e(backLabel)}</a></div>
-      <header class="article-heading"><p class="eyebrow">${project ? "Research notebook / " + e(project.area) : "Field notes"}${post.kind === "placeholder" ? " / placeholder" : ""}</p><h1>${e(post.title)}</h1><p class="article-deck">${e(post.summary)}</p><div class="article-byline"><span>${e(site.name)}</span><time datetime="${post.date}">${prettyDate(post.date)}</time><span>${e(post.kind)}</span></div></header>
-      <div class="article-layout"><aside class="article-margin"><p>${project ? e(project.title) : "Field notes"}</p>${post.kind === "placeholder" ? '<p class="placeholder-label">Placeholder entry.<br>No results reported.</p>' : ""}<a href="${back}">Back to ${project ? "project" : "all notes"} ↗</a></aside><article class="article-content">${post.html}</article></div><div class="page-return"><a href="${back}">← ${e(backLabel)}</a></div>`,
+      <header class="article-heading"><h1>${e(post.title)}</h1><p class="article-deck">${e(post.summary)}</p><div class="article-byline"><span>${e(fullName)}</span><time datetime="${post.date}">${prettyDate(post.date)}</time></div></header>
+      <article class="article-content">${post.html}</article><div class="page-return"><a href="${back}">← ${e(backLabel)}</a></div>`,
       {
         title: post.title,
         description: post.summary,
@@ -138,14 +124,14 @@ export function renderSite({ site, projects, posts }) {
   pages.set(
     "about/index.html",
     page(
-      `<header class="page-heading"><h1>A little bit<br>about me.</h1></header><div class="about-layout"><div class="about-prose">${site.bio.map((paragraph) => `<p>${e(paragraph)}</p>`).join("")}</div><aside class="interest-index"><h2>Current interests</h2><ul>${site.interests.map((interest) => `<li>${e(interest)}</li>`).join("")}</ul></aside></div><div class="about-details">${background}${links}</div>`,
+      `<header class="page-heading"><h1>A little bit<br>about me.</h1></header><div class="about-layout"><div class="about-prose">${site.bio.map((paragraph) => `<p>${e(paragraph)}</p>`).join("")}</div><aside class="interest-index"><h2>Interests</h2><ul>${site.interests.map((interest) => `<li>${e(interest)}</li>`).join("")}</ul></aside></div><div class="about-details">${background}${links}</div>`,
       { title: "About", section: "about" },
     ),
   );
   pages.set(
     "404.html",
     page(
-      '<header class="page-heading"><p class="eyebrow">404 / outside the field of view</p><h1>No signal here.</h1><p class="page-lead">This observation could not be found.</p><a class="inline-link" href="/">Return to the observatory →</a></header>',
+      '<header class="page-heading"><h1>Page not found.</h1><p><a href="/">Back to home</a></p></header>',
       { title: "Not found" },
     ),
   );

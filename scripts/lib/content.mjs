@@ -100,6 +100,7 @@ export async function loadContent(root) {
   );
   for (const key of ["name", "identity", "tagline", "description", "github"])
     text(site[key], "site." + key);
+  if (site.introduction !== undefined) text(site.introduction, "site.introduction");
   if (!/^https:\/\//.test(site.github))
     throw new Error("site.github must be an HTTPS URL.");
   for (const key of ["bio", "interests"]) {
