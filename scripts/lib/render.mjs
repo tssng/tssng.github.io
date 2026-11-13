@@ -36,7 +36,7 @@ export function renderSite({ site, projects, posts }) {
   function row(project, heading = "h3") {
     return `<article class="research-item"><a class="research-row" href="${projectUrl(project)}" data-sigil-trigger>
       <div class="row-copy"><${heading}>${e(project.title)}</${heading}><p class="row-summary">${e(project.summary)}</p></div>
-      <div class="row-glyph" aria-hidden="true">${glyph(project.glyph)}</div></a></article>`;
+      <div class="row-glyph" aria-hidden="true">${glyph(project.glyph, "small")}</div></a></article>`;
   }
   function postList(entries, href) {
     return `<ol class="post-list">${entries.map((post) => `<li><a class="post-row" href="${href(post)}"><div><h3>${e(post.title)}</h3><p>${e(post.summary)}</p></div><time datetime="${post.date}">${prettyDate(post.date)}</time></a></li>`).join("")}</ol>`;

@@ -7,6 +7,8 @@ Use Node 22 or newer. Run `npm run build`, then `npm start` to preview at http:/
 - `content/reports/<project-slug>/*.md`: reports appear only when the project's JSON has `"reports": true`. Other projects stay simple summaries.
 - `content/posts/*.md`: blog posts. Copy `_template.md`, give it a new filename, and set `draft: false` to publish. Notes appear on the homepage when there are published posts.
 
-The homepage gridworld is a shortest-path illustration, not a trained agent. Its geometry and route calculations live in `public/world-model.js`; playback, visibility, and reduced-motion handling live in `public/gridworld.js`. It has a static rendering when JavaScript is unavailable. The existing sigil frames and hover animations live in `scripts/lib/glyphs.mjs`, `scripts/lib/sigil-patterns.json`, and `public/site.js`.
+The homepage gridworld is a shortest-path illustration, not a trained agent. Its geometry and route calculations live in `public/world-model.js`; playback, visibility, and reduced-motion handling live in `public/gridworld.js`. It has a static rendering when JavaScript is unavailable. The ASCII sigil frames and hover animations live in `scripts/lib/glyphs.mjs`, `scripts/lib/ascii-sigil-frames.json`, and `public/site.js`.
 
 Page layouts are in `scripts/lib/render.mjs`; appearance is in `public/styles.css`. Typography follows the supplied HTML references with system Times fonts; only the ASCII artwork uses the self-hosted Plex font.
+
+ASCII sigils have separate `large` (49 × 25 characters) and `small` (25 × 13 characters) frames. Spaces are transparent. Every frame must keep its dimensions and contain only printable ASCII. The sun has five held frames; the eye and fiber each have three. Hover or keyboard focus plays them forward; leaving reverses them. Project-page drawings also support click/tap to hold and Escape to reset. Reduced motion shows the endpoint immediately.

@@ -2,7 +2,7 @@
 // Adapted from the supplied HTML reference; this does not simulate model training.
 export const COLS = 72, ROWS = 24;
 const SIZE = COLS * ROWS, GX = 54, GY = 12;
-const DIRECTIONS = [[1, 0, '›'], [0, 1, 'v'], [0, -1, '^'], [-1, 0, '‹']];
+const DIRECTIONS = [[1, 0, '>'], [0, 1, 'v'], [0, -1, '^'], [-1, 0, '<']];
 const LAYOUTS = [
   [[12, 0, 13, 13], [12, 18, 13, 23], [24, 6, 25, 23], [36, 0, 37, 8], [36, 16, 37, 23], [17, 9, 20, 9], [29, 14, 32, 14]],
   [[12, 5, 13, 23], [24, 0, 25, 16], [36, 0, 37, 3], [36, 9, 37, 23], [17, 9, 20, 9], [29, 14, 32, 14]],
@@ -19,7 +19,7 @@ export function createWorld(layout) {
     }
   const put = (x, y, ch) => { if (x >= 0 && x < COLS && y >= 0 && y < ROWS) sun[y * COLS + x] = ch; };
   for (let n = 6; n <= 8; n++) { put(GX, GY - n, '|'); put(GX, GY + n, '|'); }
-  for (let n = 11; n <= 14; n++) { put(GX - n, GY, '—'); put(GX + n, GY, '—'); }
+  for (let n = 11; n <= 14; n++) { put(GX - n, GY, '-'); put(GX + n, GY, '-'); }
   for (const dx of [-1, 1]) for (const dy of [-1, 1]) for (const n of [4, 5])
     put(GX + dx * n * 2, GY + dy * n, dx === dy ? '\\' : '/');
   const distance = new Int16Array(SIZE).fill(-1), queue = [];
@@ -83,7 +83,7 @@ export function relocate(world, state) {
 }
 export function drawWorld(world, state, showPolicy = false) {
   const field = (showPolicy ? world.arrows : world.field).slice(), trail = blank();
-  state.trail.forEach((k, i) => { trail[k] = i < 4 ? '·' : '.'; field[k] = ' '; });
+  state.trail.forEach((k, i) => { trail[k] = i < 4 ? '.' : '.'; field[k] = ' '; });
   const k = state.y * COLS + state.x;
   field[k] = ' '; trail[k] = ' ';
   return {field: lines(field), walls: world.wallChars, sun: world.sun, trail: lines(trail)};

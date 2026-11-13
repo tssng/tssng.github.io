@@ -4,65 +4,34 @@ const animations = [];
 
 function animateSigil(element) {
   const layers = [...element.querySelectorAll("[data-sigil-frame]")];
-  const duration = Number(element.dataset.duration);
-  const stepped = element.dataset.stepped === "true";
-  let progress = 0,
-    target = 0,
-    frameRequest = null,
-    previousTime = null,
-    visibleFrame = -1;
+  const delay = Number(element.dataset.frameDelay);
+  let index = 0, target = 0, timer = null;
   function paint() {
-    if (stepped) {
-      const frame = Math.min(
-        layers.length - 1,
-        Math.floor(progress * (layers.length - 1) + 1e-6),
-      );
-      if (frame !== visibleFrame) {
-        layers.forEach((layer, index) => {
-          layer.style.opacity = index === frame ? 1 : 0;
-        });
-        element.dataset.frame = frame;
-        visibleFrame = frame;
-      }
-    } else {
-      const position = progress * (layers.length - 1);
-      layers.forEach((layer, index) => {
-        layer.style.opacity = Math.max(0, 1 - Math.abs(position - index));
-      });
-      element.dataset.frame = Math.round(position);
-    }
-    element.dataset.progress = progress.toFixed(3);
+    layers.forEach((layer, frame) => { layer.hidden = frame !== index; });
+    element.dataset.frame = index;
+  }
+  function stop() {
+    clearTimeout(timer);
+    timer = null;
   }
   function settle() {
-    if (frameRequest !== null) cancelAnimationFrame(frameRequest);
-    frameRequest = null;
-    previousTime = null;
-    progress = target;
+    stop();
+    index = target;
     paint();
   }
-  function tick(now) {
-    const elapsed =
-      previousTime === null ? 0 : Math.min(50, now - previousTime);
-    previousTime = now;
-    const step = elapsed / duration;
-    progress =
-      target > progress
-        ? Math.min(target, progress + step)
-        : Math.max(target, progress - step);
-    if (Math.abs(progress - target) < 0.005) progress = target;
+  function step() {
+    timer = null;
+    if (index === target) return;
+    index += Math.sign(target - index);
     paint();
-    if (progress !== target) frameRequest = requestAnimationFrame(tick);
-    else {
-      frameRequest = null;
-      previousTime = null;
-    }
+    if (index !== target) timer = setTimeout(step, delay);
   }
   const controller = {
     reveal(revealed) {
-      target = revealed ? 1 : 0;
+      target = revealed ? layers.length - 1 : 0;
+      stop();
       if (motionPreference.matches || document.hidden) settle();
-      else if (frameRequest === null && progress !== target)
-        frameRequest = requestAnimationFrame(tick);
+      else if (index !== target) timer = setTimeout(step, delay);
     },
     settle,
   };

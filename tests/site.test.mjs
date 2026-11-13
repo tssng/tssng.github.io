@@ -60,6 +60,9 @@ test("only the opted-in RL project has reports; the original projects remain pre
     const home = await html("");
     assert.match(home, /data-world/);
     assert.match(home, /src="\/gridworld.js"/);
+    assert.match(home, /class="ascii-sigil"/);
+    assert.match(home, /data-sigil-size="small"/);
+    assert.doesNotMatch(home, /class="grid-sigil"/);
     for (const sigil of ["sun", "fiber", "eye"]) {
       assert.match(home, new RegExp('data-animated-sigil="' + sigil + '"'));
     }
@@ -81,6 +84,7 @@ test("only the opted-in RL project has reports; the original projects remain pre
     }
     const rl = await html("research/world-model-adaptation");
     assert.match(rl, /data-sigil="sun"/);
+    assert.match(rl, /data-sigil-size="large"/);
     assert.match(rl, /class="study-sigil sigil-toggle"/);
     assert.match(rl, /<details class="report-disclosure">/);
     assert.doesNotMatch(rl, /<details[^>]*\bopen\b/);
@@ -96,28 +100,27 @@ test("only the opted-in RL project has reports; the original projects remain pre
     await assert.rejects(readFile(path.join(root, "build/content/site.json")));
   }));
 
-test("solar animation has five held phases with a filled disc before the rays", () => {
-  const frames = sigilFrames("sun");
-  assert.equal(frames.length, 5);
-  const lit = (rows) =>
-    rows.reduce(
-      (count, row) => count + [...row].filter((cell) => cell !== ".").length,
-      0,
-    );
-  for (let index = 1; index < frames.length; index++) {
-    assert.ok(lit(frames[index]) > lit(frames[index - 1]));
+test("ASCII animations retain fixed dimensions and the solar disc fills before rays appear", () => {
+  for (const [size, columns, rows] of [["large", 49, 25], ["small", 25, 13]]) {
+    for (const kind of ["sun", "eye", "fiber"]) {
+      const frames = sigilFrames(kind, size);
+      assert.equal(frames.length, kind === "sun" ? 5 : 3);
+      for (const frame of frames) {
+        assert.equal(frame.length, rows);
+        assert.ok(frame.every(row => row.length === columns && /^[\x20-\x7e]+$/.test(row)));
+      }
+    }
+    const frames = sigilFrames("sun", size);
+    const lit = (frame) => frame.reduce((n, row) => n + [...row].filter(char => char !== " ").length, 0);
+    for (let i = 1; i < frames.length; i++) assert.ok(lit(frames[i]) > lit(frames[i - 1]));
+    const y = Math.floor(rows / 2), x = Math.floor(columns / 2);
+    assert.equal(frames[0][y][x], " ");
+    assert.notEqual(frames[2][y][x], " ");
+    assert.notEqual(frames[3][y][x], " ");
+    const rays = frame => frame.some((row, y) => [...row].some((char, x) => char !== " " && Math.hypot(x / (columns - 1) * 30 - 15, y / (rows - 1) * 30 - 15) > 10.5));
+    assert.ok(frames.slice(0, 4).every(frame => !rays(frame)));
+    assert.ok(rays(frames[4]));
   }
-  assert.equal(frames[0][15][15], ".");
-  assert.notEqual(frames[2][15][15], ".");
-  assert.notEqual(frames[3][15][15], ".");
-  const rays = (rows) =>
-    rows.some((row, y) =>
-      [...row].some(
-        (cell, x) => cell !== "." && Math.hypot(x - 15, y - 15) > 10.5,
-      ),
-    );
-  assert.ok(frames.slice(0, 4).every((rows) => !rays(rows)));
-  assert.ok(rays(frames[4]));
 });
 test("About preserves authored biography and supports optional social and resume links", async () =>
   fixture(async ({ root, build, html }) => {
@@ -296,7 +299,7 @@ test("moving walls relocates covered agents and the static sketch has complete l
     const art = drawWorld(a, initialState(a), policy);
     for (const layer of Object.values(art)) {
       assert.equal(layer.split('\n').length, ROWS);
-      assert.ok(layer.split('\n').every(row => row.length === COLS));
+      assert.ok(layer.split('\n').every(row => row.length === COLS && /^[\x20-\x7e]+$/.test(row)));
     }
   }
 });

@@ -1,94 +1,28 @@
-import patterns from "./sigil-patterns.json" with { type: "json" };
+import patterns from "./ascii-sigil-frames.json" with { type: "json" };
 
-// Approved cell maps shared by the homepage, project previews, and summaries.
-// A dot is transparent; the remaining characters indicate illuminated tones.
-export const GRID_SIZE = 31;
+// Character-for-character copies of the approved ASCII mockups.
+// Small drawings are composed separately so thumbnails remain legible.
 export const SIGILS = Object.freeze({
-  sun: {
-    label: "Sun",
-    signal: "RL interpretability",
-    description: "Crescent moon to waxing gibbous to a filled sun with rays.",
-    revealed: "filled sun",
-    duration: 620,
-    stepped: true,
-  },
-  fiber: {
-    label: "Fiber",
-    signal: "Computational imaging",
-    description:
-      "A circular cross-section and longitudinal fiber become an oblique hollow tube.",
-    revealed: "oblique tube",
-    duration: 380,
-    stepped: false,
-  },
-  eye: {
-    label: "Eye",
-    signal: "Model interpretability",
-    description: "A closed eye opens to reveal its iris.",
-    revealed: "open eye",
-    duration: 380,
-    stepped: false,
-  },
+  sun: { revealed: "filled sun", frameDelay: 155 },
+  fiber: { revealed: "oblique tube", frameDelay: 180 },
+  eye: { revealed: "open eye", frameDelay: 180 },
 });
-const tones = { s: "slate", d: "muted", w: "soft", a: "active", b: "selected" };
+const dimensions = { large: [49, 25], small: [25, 13] };
+const escape = (value) => value.replace(/[&<>]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[char]);
 
-function paths(rows, size) {
-  if (
-    rows.length !== size ||
-    rows.some((row) => row.length !== size || /[^.sdwab]/.test(row))
-  ) {
-    throw new Error("Invalid " + size + " × " + size + " sigil pattern.");
-  }
-  const groups = Object.fromEntries(
-    Object.values(tones).map((tone) => [tone, ""]),
-  );
-  rows.forEach((row, y) =>
-    [...row].forEach((cell, x) => {
-      if (cell !== ".")
-        groups[tones[cell]] += "M" + x * 10 + " " + y * 10 + "h7.7v7.7h-7.7z";
-    }),
-  );
-  return Object.entries(groups)
-    .filter(([, d]) => d)
-    .map(([tone, d]) => '<path class="cell-' + tone + '" d="' + d + '"/>')
-    .join("");
+export function sigilFrames(kind, size = "large") {
+  if (!Object.hasOwn(SIGILS, kind) || !Object.hasOwn(dimensions, size))
+    throw new Error("Unknown ASCII sigil or size: " + kind + " / " + size);
+  const [columns, rows] = dimensions[size];
+  return patterns[size][kind].map((frame) => {
+    const lines = frame.split("\n");
+    if (lines.length !== rows || lines.some(line => line.length !== columns || /[^\x20-\x7e]/.test(line)))
+      throw new Error("Invalid ASCII frame: " + kind + " / " + size);
+    return lines;
+  });
 }
-export function sigilFrames(kind) {
-  if (!Object.hasOwn(SIGILS, kind))
-    throw new Error("Unknown grid sigil: " + kind);
-  return patterns.patterns[kind];
-}
-export function glyph(kind) {
-  const frames = sigilFrames(kind);
-  const sigil = SIGILS[kind];
-  return (
-    '<span class="sigil-motion" data-animated-sigil="' +
-    kind +
-    '" data-duration="' +
-    sigil.duration +
-    '" data-stepped="' +
-    sigil.stepped +
-    '" data-frame="0" data-progress="0" aria-hidden="true">' +
-    '<svg xmlns="http://www.w3.org/2000/svg" class="grid-sigil" data-sigil="' +
-    kind +
-    '" data-grid-size="31" viewBox="0 0 307.7 307.7" aria-hidden="true" focusable="false">' +
-    frames
-      .map(
-        (rows, index) =>
-          '<g data-sigil-frame="' +
-          index +
-          '">' +
-          paths(rows, GRID_SIZE) +
-          "</g>",
-      )
-      .join("") +
-    "</svg></span>"
-  );
-}
-export function apertureGlyph() {
-  return (
-    '<svg xmlns="http://www.w3.org/2000/svg" class="aperture-grid" viewBox="0 0 907.7 907.7" aria-hidden="true" focusable="false">' +
-    paths(patterns.aperture, 91) +
-    "</svg>"
-  );
+
+export function glyph(kind, size = "large") {
+  const frames = sigilFrames(kind, size);
+  return `<span class="sigil-motion" data-animated-sigil="${kind}" data-sigil="${kind}" data-sigil-size="${size}" data-frame-delay="${SIGILS[kind].frameDelay}" data-frame="0" aria-hidden="true">${frames.map((rows, index) => `<pre class="ascii-sigil" data-sigil-frame="${index}"${index ? " hidden" : ""}>${escape(rows.join("\n"))}</pre>`).join("")}</span>`;
 }
