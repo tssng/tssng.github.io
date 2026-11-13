@@ -6,5 +6,5 @@ kind: placeholder
 draft: false
 ---
 
-This is a **placeholder entry** for the world-model adaptation project.
+This is a **placeholder entry** for the RL capability acquisition project.
 

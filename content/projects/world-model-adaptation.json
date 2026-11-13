@@ -1,16 +1,21 @@
 {
   "order": 3,
-  "title": "When the world changes",
+  "title": "How RL changes capabilities",
   "area": "Reinforcement learning × interpretability",
   "category": "rl",
   "glyph": "sun",
-  "summary": "Studying how world-model agents revise outdated information when an environment’s physics changes.",
-  "question": "When physics changes, how does a world-model agent replace outdated information? Can we identify the internal computations responsible for successful or failed adaptation?",
+  "summary": "Studying how RL changes a model’s capabilities and whether imagined practice helps newly learned skills transfer and persist.",
+  "question": "When does RL turn experience into a new, reusable skill, and can imagined practice help it transfer and persist?",
   "abstract": [
-    "A learned world model can retain assumptions that stop matching its environment. This project asks how an agent responds when the underlying physics changes: which information is retained, which information is replaced, and how those changes affect behavior.",
-    "The interpretability question is causal: can we identify the internal computations that distinguish successful adaptation from persistent reliance on outdated information?", 
-    "More on this soon!"
+    "I’m investigating how RL changes a small language model’s capabilities: whether it makes existing solutions more reliable, teaches new rules, or enables new combinations of skills.",
+    "The plan is to compare learning from real interaction, replaying the same experience, and practicing with a learned model of the environment. I’ll test whether newly learned skills transfer to unfamiliar tasks and survive further training.",
+    "Across training checkpoints, I’ll use causal interventions to investigate which internal changes explain gains in capability, transfer, or retention."
   ],
-  "tags": ["World models", "Adaptation", "Causal analysis"],
+  "tags": [
+    "Capability acquisition",
+    "Continual learning",
+    "Imagined practice",
+    "Causal analysis"
+  ],
   "reports": true
 }

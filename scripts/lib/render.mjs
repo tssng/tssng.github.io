@@ -49,8 +49,8 @@ export function renderSite({ site, projects, posts }) {
     return `<figure class="world-sketch"><div class="world-art" role="img" aria-label="An ASCII maze. An at-sign follows a path through walls toward a sun." data-world>
       ${["field", "walls", "sun", "trail"].map(layer => `<pre class="world-${layer}" data-world-layer="${layer}" aria-hidden="true">${e(art[layer])}</pre>`).join("")}
       <span class="world-agent" aria-hidden="true" style="left:${state.x / 72 * 100}%;top:${state.y / 24 * 100}%">@</span></div>
-      <figcaption><p>The @ is trying to reach the sun.</p><div class="world-controls" hidden><button type="button" data-world-action="walls">Move the walls</button><button type="button" data-world-action="policy" aria-pressed="false">Show policy</button><button type="button" data-world-action="pause" aria-pressed="false">Pause</button></div></figcaption>
-      <details class="world-explanation"><summary>How it works</summary><p>This is a pathfinding sketch: each move follows the shortest route to the sun. The characters show distance to the goal; the arrows show the next move. When the walls change, the route is recalculated. There’s no trained model behind this one.</p></details><span class="sr-only" role="status" data-world-status></span></figure>`;
+      <div class="world-controls" hidden><button type="button" data-world-action="walls">Move the walls</button><button type="button" data-world-action="policy" aria-pressed="false">Show policy</button><button type="button" data-world-action="pause" aria-pressed="false">Pause</button></div>
+      <span class="sr-only" role="status" data-world-status></span></figure>`;
   }
   const pages = new Map();
   pages.set("index.html", page(
