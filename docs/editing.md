@@ -1,6 +1,6 @@
 # Writing and editing
 
-A post is a Markdown file with a small header. Put images in the same folder and place them anywhere in the text. Blog posts and project reports use the same format.
+A post is a Markdown file with a small header. Put images in the same folder and place them anywhere in the text. The blog lives under **Notes** at https://tssng.github.io/notes/. Published posts also appear on the homepage.
 
 ## Start a post
 
@@ -84,13 +84,13 @@ git push origin main
 
 If a save introduces a broken image or invalid header, the preview shows the error and keeps the last working page. Fix the file and save again. Publishing builds also preserve the last good output on failure.
 
-## Write a project report
+## Project updates
 
-```sh
-npm run new:report -- world-model-adaptation "First progress check"
-```
+Project pages contain summaries only. Publish progress updates and longer research writing as posts in **Notes**, using the same workflow above. You can link a post to its project with a normal Markdown link.
 
-This creates `content/reports/world-model-adaptation/first-progress-check/index.md`. Write and add images exactly as for a blog post. The project must have `"reports": true` in its JSON. Reports appear in that project's expandable **Reports & progress** section.
+## Publishing from VS Code
+
+Save your files, stage them in Source Control, create a commit, then **Push** (or **Sync Changes**) to `main`. GitHub Actions builds and deploys the site automatically. Saving or committing without pushing does not update the live site. If a build fails, check the repository's **Actions** tab; the last successful deployment stays live. Posts with `draft: true` are not published.
 
 ## Edit other content
 

@@ -47,8 +47,9 @@ async function editProject(root, slug, edit) {
   const data = JSON.parse(await readFile(filename, "utf8"));
   await writeFile(filename, JSON.stringify(edit(data)));
 }
-test("only the opted-in RL project has reports; the original projects remain previews", async () =>
+test("reports appear only when explicitly enabled in the project fixture", async () =>
   fixture(async ({ root, build, html }) => {
+    await editProject(root, "world-model-adaptation", project => ({ ...project, reports: true }));
     await writeFile(
       path.join(
         root,
@@ -156,6 +157,7 @@ test("About preserves authored biography and supports optional social and resume
   }));
 test("turning reports off removes both notebook UI and previously built report routes", async () =>
   fixture(async ({ root, build, html }) => {
+    await editProject(root, "world-model-adaptation", project => ({ ...project, reports: true }));
     await writeFile(
       path.join(
         root,
@@ -356,6 +358,7 @@ test("new-post commands create editable drafts and refuse to overwrite posts", a
     assert.throws(() => create(['A "quoted" title']), /already uses/);
     assert.equal(await readFile(filename, "utf8"), source);
     assert.throws(() => create(["--report", "myelin-segmentation", "Hidden report"]), /Enable "reports": true/);
+    await editProject(root, "world-model-adaptation", project => ({ ...project, reports: true }));
     create(["--report", "world-model-adaptation", "First progress check"]);
     const reportPath = path.join(root, "content/reports/world-model-adaptation/first-progress-check");
     let report = await readFile(path.join(reportPath, "index.md"), "utf8");
