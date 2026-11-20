@@ -8,14 +8,12 @@
   "question": "When does RL turn experience into a new, reusable skill, and can imagined practice help it transfer and persist?",
   "abstract": [
     "I’m investigating how RL changes a small language model’s capabilities: whether it makes existing solutions more reliable, teaches new rules, or enables new combinations of skills.",
-    "The plan is to compare learning from real interaction, replaying the same experience, and practicing with a learned model of the environment. I’ll test whether newly learned skills transfer to unfamiliar tasks and survive further training.",
-    "Across training checkpoints, I’ll use causal interventions to investigate which internal changes explain gains in capability, transfer, or retention."
+    "More to come soon! Check out my notes for updates."
   ],
   "tags": [
     "Capability acquisition",
     "Continual learning",
-    "Imagined practice",
-    "Causal analysis"
+    "Imagined practice"
   ],
   "reports": false
 }
