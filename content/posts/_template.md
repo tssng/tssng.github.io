@@ -1,14 +1,18 @@
 ---
 title: Your post title
-date: 2026-10-27
-summary: A short description of what this note explores.
+date: 2026-11-20
+summary: A one-sentence description of this post.
 draft: true
 ---
 
-Start writing here. Rename this file to a descriptive slug, such as
-`a-note-on-probes.md`, and change `draft` to `false` when ready.
+Start writing here.
 
-## A question worth asking
+<!-- Images: place the file beside index.md, then use:
+![Describe the image](./image.png "Optional caption")
+-->
 
-Markdown supports paragraphs, headings, lists, links, images, and fenced code.
-Use absolute paths such as `/assets/my-figure.png` for local images.
+<!-- Text box:
+> [!NOTE] A short title
+>
+> Text, **bold**, and [links](https://example.com) work here.
+-->

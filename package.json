@@ -9,7 +9,10 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "start": "node scripts/serve.mjs",
-    "test": "node --test tests/site.test.mjs"
+    "test": "node --test tests/site.test.mjs",
+    "dev": "node scripts/dev.mjs",
+    "new:post": "node scripts/new-post.mjs",
+    "new:report": "node scripts/new-post.mjs --report"
   },
   "dependencies": {
     "marked": "18.1.2"

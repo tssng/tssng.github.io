@@ -303,3 +303,67 @@ test("moving walls relocates covered agents and the static sketch has complete l
     }
   }
 });
+
+test("folder posts publish adjacent media and Markdown boxes without publishing drafts or source files", async () =>
+  fixture(async ({ root, build, html }) => {
+    const directory = path.join(root, "content/posts/with-images");
+    await mkdir(path.join(directory, "images"), { recursive: true });
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>';
+    await writeFile(path.join(directory, "images/_a&b.svg"), svg);
+    await writeFile(path.join(directory, "private.md"), "Source only");
+    const filename = path.join(directory, "index.md");
+    const source = '---\ntitle: Images and boxes\ndate: 2026-11-20\nsummary: An authoring fixture.\ndraft: true\n---\n\n![Alt text](./images/_a&b.svg "A caption & its meaning")\n\n> [!NOTE] A <title>\n>\n> Some **evidence** with [a link](/research/).\n>\n> - First point\n> - Second point\n\n```text\n> [!NOTE]\n> This is literal code.\n```\n';
+    await writeFile(filename, source);
+    build();
+    const original = await html("");
+    await assert.rejects(html("notes/with-images"));
+    await assert.rejects(readFile(path.join(root, "build/notes/with-images/images/_a&b.svg")));
+    execFileSync(process.execPath, ["scripts/build.mjs", "--preview"], { cwd: root });
+    assert.equal(await html(""), original, "preview cannot replace public build");
+    const preview = await readFile(path.join(root, ".preview-build/notes/with-images/index.html"), "utf8");
+    assert.match(preview, /Draft · visible only in local preview/);
+    assert.match(preview, /noindex, nofollow/);
+    assert.equal(await readFile(path.join(root, ".preview-build/notes/with-images/images/_a&b.svg"), "utf8"), svg);
+    await writeFile(filename, source.replace("draft: true", "draft: false"));
+    build();
+    const post = await html("notes/with-images");
+    assert.match(post, /<figure class="article-figure">/);
+    assert.match(post, /<figcaption>A caption &amp; its meaning<\/figcaption>/);
+    assert.match(post, /class="text-box text-box-note"/);
+    assert.match(post, /A &lt;title&gt;/);
+    assert.match(post, /<strong>evidence<\/strong>/);
+    assert.match(post, /<li>First point<\/li>/);
+    assert.equal((post.match(/class="text-box text-box-note"/g) || []).length, 1, "code blocks are literal");
+    assert.doesNotMatch(post, /noindex|draft-label|__preview/);
+    await assert.rejects(readFile(path.join(root, "build/notes/with-images/private.md")));
+    await assert.rejects(readFile(path.join(root, "build/notes/with-images/index.md")));
+    await rm(path.join(directory, "images/_a&b.svg"));
+    assert.throws(build, /Broken local link/);
+    assert.equal(await html("notes/with-images"), post, "broken image keeps last good build");
+    await writeFile(path.join(directory, "images/_a&b.svg"), svg);
+    await writeFile(path.join(root, "content/posts/with-images.md"), source.replace("draft: true", "draft: false"));
+    assert.throws(build, /Duplicate post slug/);
+  }));
+
+test("new-post commands create editable drafts and refuse to overwrite posts", async () =>
+  fixture(async ({ root, build, html }) => {
+    const create = args => execFileSync(process.execPath, ["scripts/new-post.mjs", ...args], { cwd: root, encoding: "utf8", stdio: "pipe" });
+    create(['A "quoted" title']);
+    const filename = path.join(root, "content/posts/a-quoted-title/index.md");
+    const source = await readFile(filename, "utf8");
+    assert.match(source, /draft: true/);
+    assert.match(source, /^date: \d{4}-\d{2}-\d{2}$/m);
+    assert.throws(() => create(['A "quoted" title']), /already uses/);
+    assert.equal(await readFile(filename, "utf8"), source);
+    assert.throws(() => create(["--report", "myelin-segmentation", "Hidden report"]), /Enable "reports": true/);
+    create(["--report", "world-model-adaptation", "First progress check"]);
+    const reportPath = path.join(root, "content/reports/world-model-adaptation/first-progress-check");
+    let report = await readFile(path.join(reportPath, "index.md"), "utf8");
+    report = report.replace("draft: true", "draft: false") + '\n![Report image](./plot.svg "Report caption")\n';
+    await writeFile(path.join(reportPath, "index.md"), report);
+    await writeFile(path.join(reportPath, "plot.svg"), '<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+    build();
+    assert.match(await html("research/world-model-adaptation/reports/first-progress-check"), /Report caption/);
+    assert.match(await readFile(path.join(root, "build/research/world-model-adaptation/reports/first-progress-check/plot.svg"), "utf8"), /<svg/);
+    await assert.rejects(html("notes/a-quoted-title"));
+  }));

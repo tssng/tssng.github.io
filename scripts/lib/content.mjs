@@ -1,6 +1,6 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { marked } from "marked";
+import { renderMarkdown } from "./markdown.mjs";
 import { SIGILS } from "./glyphs.mjs";
 
 export const escape = (value) =>
@@ -28,7 +28,7 @@ const text = (value, label) => {
     throw new Error(label + " must be a nonempty string.");
   return value;
 };
-export function parsePost(source, filename) {
+export function parsePost(source, filename, { includeDrafts = false } = {}) {
   const match = source
     .replace(/\r\n/g, "\n")
     .match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
@@ -49,7 +49,7 @@ export function parsePost(source, filename) {
   }
   if (meta.draft !== undefined && !["true", "false"].includes(meta.draft))
     throw new Error(filename + ": draft must be true or false.");
-  if (meta.draft === "true") return null;
+  if (meta.draft === "true" && !includeDrafts) return null;
   for (const key of ["title", "date", "summary"])
     text(meta[key], filename + ": " + key);
   if (
@@ -70,31 +70,36 @@ export function parsePost(source, filename) {
     ...meta,
     slug,
     kind: meta.kind || "note",
-    html: marked.parse(match[2]),
+    draft: meta.draft === "true",
+    html: renderMarkdown(match[2]),
   };
 }
-async function markdownFiles(directory) {
-  let filenames;
+async function markdownFiles(directory, options) {
+  let entries;
   try {
-    filenames = await readdir(directory);
+    entries = await readdir(directory, { withFileTypes: true });
   } catch (error) {
     if (error.code === "ENOENT") return [];
     throw error;
   }
   const posts = [];
-  for (const filename of filenames.sort()) {
-    if (!filename.endsWith(".md") || filename.startsWith("_")) continue;
-    const post = parsePost(
-      await readFile(path.join(directory, filename), "utf8"),
-      filename,
-    );
-    if (post) posts.push(post);
+  for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name))) {
+    if (entry.name.startsWith("_") || entry.name.startsWith(".")) continue;
+    const folder = entry.isDirectory();
+    if (!folder && (!entry.isFile() || !entry.name.endsWith(".md"))) continue;
+    const filename = folder ? entry.name + ".md" : entry.name;
+    const sourcePath = folder ? path.join(directory, entry.name, "index.md") : path.join(directory, entry.name);
+    let source;
+    try { source = await readFile(sourcePath, "utf8"); }
+    catch (error) { if (folder && error.code === "ENOENT") continue; throw error; }
+    const post = parsePost(source, filename, options);
+    if (post) posts.push({ ...post, assetDirectory: folder ? path.dirname(sourcePath) : null });
   }
-  return posts.sort(
-    (a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug),
-  );
+  if (new Set(posts.map(post => post.slug)).size !== posts.length)
+    throw new Error("Duplicate post slug in " + directory + ": use either slug.md or slug/index.md, not both.");
+  return posts.sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug));
 }
-export async function loadContent(root) {
+export async function loadContent(root, options = {}) {
   const site = JSON.parse(
     await readFile(path.join(root, "content/site.json"), "utf8"),
   );
@@ -179,7 +184,7 @@ export async function loadContent(root) {
     // Disabled report folders are not read or emitted, even if files exist.
     project.entries =
       project.reports === true
-        ? await markdownFiles(path.join(root, "content/reports", project.slug))
+        ? await markdownFiles(path.join(root, "content/reports", project.slug), options)
         : [];
     projects.push(project);
   }
@@ -191,6 +196,6 @@ export async function loadContent(root) {
   return {
     site,
     projects,
-    posts: await markdownFiles(path.join(root, "content/posts")),
+    posts: await markdownFiles(path.join(root, "content/posts"), options),
   };
 }

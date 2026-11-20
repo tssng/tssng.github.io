@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="260" viewBox="0 0 800 260" role="img" aria-label="Observation and experiment connected by a line">
+<rect width="800" height="260" fill="#1b1b1b"/>
+<g fill="none" stroke="#c8a66b" stroke-width="1.5"><rect x="70" y="80" width="250" height="100"/><path d="M320 130H480"/><rect x="480" y="80" width="250" height="100"/></g>
+<g fill="#e8e5de" font-family="Georgia,serif" font-size="26" text-anchor="middle"><text x="195" y="140">Observation</text><text x="605" y="140">Experiment</text></g>
+</svg>

@@ -6,7 +6,7 @@ const projectUrl = (project) => "/research/" + project.slug + "/";
 const reportUrl = (project, post) =>
   projectUrl(project) + "reports/" + post.slug + "/";
 
-export function renderSite({ site, projects, posts }) {
+export function renderSite({ site, projects, posts, preview = false }) {
   const fullName = `${site.name} ${site.identity}`;
   function header(section, home = false) {
     return `<header class="site-header${home ? " home-header" : ""}">${home ? `<h1 class="identity">${e(fullName)}</h1>` : `<a class="identity" href="/">${e(fullName)}</a>`}
@@ -26,7 +26,7 @@ export function renderSite({ site, projects, posts }) {
     } = {},
   ) {
     return `<!doctype html><html lang="en" data-theme="dark"${reading ? ' data-reading="true"' : ""}><head>
-      <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="utf-8">${preview ? '<meta name="robots" content="noindex, nofollow">' : ""}<meta name="viewport" content="width=device-width, initial-scale=1">
       <title>${e(title ? title + " / " + site.name : fullName)}</title>
       <meta name="description" content="${e(description)}"><meta name="theme-color" content="#131313">
       <meta property="og:title" content="${e(title || fullName)}"><meta property="og:description" content="${e(description)}"><meta property="og:type" content="${reading ? "article" : "website"}">
@@ -103,7 +103,7 @@ export function renderSite({ site, projects, posts }) {
     const backLabel = project ? project.title : "Notes";
     return page(
       `<div class="reading-toolbar"><a href="${back}">← ${e(backLabel)}</a></div>
-      <header class="article-heading"><h1>${e(post.title)}</h1><p class="article-deck">${e(post.summary)}</p><div class="article-byline"><span>${e(fullName)}</span><time datetime="${post.date}">${prettyDate(post.date)}</time></div></header>
+      <header class="article-heading">${post.draft ? '<p class="draft-label">Draft · visible only in local preview</p>' : ""}<h1>${e(post.title)}</h1><p class="article-deck">${e(post.summary)}</p><div class="article-byline"><span>${e(fullName)}</span><time datetime="${post.date}">${prettyDate(post.date)}</time></div></header>
       <article class="article-content">${post.html}</article><div class="page-return"><a href="${back}">← ${e(backLabel)}</a></div>`,
       {
         title: post.title,

@@ -158,3 +158,16 @@ p + p { margin-top: 1em; }
   .site-shell { width: 100%; margin: 0; }
   a { text-decoration: underline; }
 }
+
+/* Markdown authoring: figures and GitHub-style text boxes. */
+.article-figure { margin: 32px 0; }
+.article-figure img { display: block; margin-inline: auto; max-width: 100%; height: auto; }
+.article-figure figcaption { margin-top: 12px; font-size: 17px; line-height: 1.5; color: var(--muted); text-align: center; }
+.article-content .text-box { background: #1b1b1b; border-left: 2px solid var(--accent); padding: 20px 24px; margin: 28px 0; }
+.article-content .text-box-title { color: var(--accent); font-size: 20px; margin-bottom: 12px; }
+.text-box > :last-child { margin-bottom: 0; }
+.text-box > :first-child + * { margin-top: 0; }
+.text-box pre { max-width: 100%; }
+.article-content .text-box-warning, .article-content .text-box-caution { border-color: #ca927a; }
+.text-box-warning .text-box-title, .text-box-caution .text-box-title { color: #ca927a; }
+.draft-label { color: var(--accent); font-size: 17px; margin-bottom: 20px; }
