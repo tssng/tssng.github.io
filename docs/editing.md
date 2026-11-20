@@ -66,6 +66,8 @@ Supported adjacent files: PNG, JPEG, GIF, WebP, AVIF, SVG, PDF, MP4, and WebM. S
 
 ## Publish
 
+In the repository’s **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**. Deploying directly from the source branch renders the README instead of the built website.
+
 1. Change `draft: true` to `draft: false`.
 2. Run `npm run build`. It checks local links and images and tells you if something is missing.
 3. Commit the post folder, including its images, and push to `main`. GitHub Pages publishes it automatically.
